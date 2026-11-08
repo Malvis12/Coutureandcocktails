@@ -1,0 +1,291 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model & Architecture
+    // ===============================================================
+    //
+    // Collection: events_public (and /events)
+    // Document ID: couture_and_cocktails (or {eventId})
+    // Fields:
+    //   - cms: map (Public copy, hero text, date, venue, service fee)
+    //   - tiers: list of maps (Ticket tier name, price, capacity, soldCount)
+    //   - updatedAt: string / timestamp
+    // Read: Public ('allow read: if true;')
+    // Write:
+    //   - create/delete: Admin only ('isAdmin()')
+    //   - update: Admin ('isAdmin()') or validated inventory update ('isValidPublicInventoryUpdate()')
+    //
+    // Collection: tickets
+    // Document ID: {ticketId} (e.g. CC-2026-100142)
+    // Read:
+    //   - get: Public ('allow get: if true;') - Attendee looks up their own pass by Ticket ID
+    //   - list: Authenticated ('allow list: if isAuthenticated();') - Organizers & gate staff listing transactions
+    // Write:
+    //   - create: Public with strict validator ('isValidTicketCreate(ticketId)')
+    //   - update: Authenticated with validator ('allow update: if isAuthenticated() && isValidTicketUpdate();') - Gate check-ins
+    //   - delete: Admin only ('allow delete: if isAdmin();')
+    //
+    // Collection: events_admin
+    // Document ID: {adminDoc}
+    // Fields:
+    //   - transactions: list (internal audit logs, private ledger)
+    // Read & Write: Admin only ('allow read, write: if isAdmin();')
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Secure Admin identification:
+    // Supports Firebase Auth email/password login directly in the web app
+    // for authorized accounts without blocking if email_verified is not yet flagged.
+    // Also supports custom claims: admin == true or role == 'admin'.
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.admin == true ||
+        request.auth.token.role == 'admin' ||
+        (
+          request.auth.token.email != null &&
+          request.auth.token.email in [
+            'coutureandcocktailsng@gmail.com',
+            'admin@couturecocktails.ng'
+          ]
+        )
+      );
+    }
+
+    function isValidEmail(email) {
+      return email is string &&
+        email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidTimestampString(val) {
+      return val is string && val.size() >= 10 && val.size() <= 40;
+    }
+
+    // ===============================================================
+    // Domain Validators: Public Event Copy & Inventory Updates
+    // ===============================================================
+
+    // Checks that an inventory update from legitimate ticket purchases
+    // preserves tier IDs, tier prices, and total capacity without tampering.
+    function tiersPriceAndStockPreserved() {
+      let req = request.resource.data.tiers;
+      let cur = resource.data.tiers;
+      return req.size() == cur.size() &&
+        (req.size() <= 0 || (req[0].id == cur[0].id && req[0].price == cur[0].price && req[0].totalStock == cur[0].totalStock)) &&
+        (req.size() <= 1 || (req[1].id == cur[1].id && req[1].price == cur[1].price && req[1].totalStock == cur[1].totalStock)) &&
+        (req.size() <= 2 || (req[2].id == cur[2].id && req[2].price == cur[2].price && req[2].totalStock == cur[2].totalStock)) &&
+        (req.size() <= 3 || (req[3].id == cur[3].id && req[3].price == cur[3].price && req[3].totalStock == cur[3].totalStock)) &&
+        (req.size() <= 4 || (req[4].id == cur[4].id && req[4].price == cur[4].price && req[4].totalStock == cur[4].totalStock)) &&
+        (req.size() <= 5 || (req[5].id == cur[5].id && req[5].price == cur[5].price && req[5].totalStock == cur[5].totalStock)) &&
+        (req.size() <= 6 || (req[6].id == cur[6].id && req[6].price == cur[6].price && req[6].totalStock == cur[6].totalStock)) &&
+        (req.size() <= 7 || (req[7].id == cur[7].id && req[7].price == cur[7].price && req[7].totalStock == cur[7].totalStock));
+    }
+
+    // Validates non-admin inventory updates (e.g. ticket sales incrementing soldCount):
+    // 1. Prohibits private fields.
+    // 2. Prohibits ANY alteration of CMS copy, dates, venue, or fees (restricted to isAdmin()).
+    // 3. Prohibits tampering with ticket tier prices or capacity.
+    function isValidPublicInventoryUpdate() {
+      let data = request.resource.data;
+      return (
+        // Document must already exist
+        resource != null &&
+
+        // Strictly prohibit private admin PIN and private transactions
+        !('adminPin' in data) &&
+        !('transactions' in data) &&
+        (!('cms' in data) || !('adminPin' in data.cms)) &&
+        
+        // Allowed keys only
+        data.keys().hasOnly(['cms', 'tiers', 'updatedAt']) &&
+
+        // Timestamp format validation
+        (!('updatedAt' in data) || isValidTimestampString(data.updatedAt)) &&
+
+        // RESTRICT CMS CHANGES TO ADMIN:
+        // Unauthorized users CANNOT change CMS content; it must match existing data
+        (!('cms' in data) || data.cms == resource.data.cms) &&
+
+        // RESTRICT TIER MODIFICATIONS:
+        // Prices, IDs, and stock limits cannot be changed by non-admins
+        (!('tiers' in data) || (
+          data.tiers is list &&
+          (data.tiers == resource.data.tiers || tiersPriceAndStockPreserved())
+        ))
+      );
+    }
+
+    // ===============================================================
+    // Domain Validators: Tickets
+    // ===============================================================
+
+    function ticketAllowedKeys() {
+      return [
+        'ticketId',
+        'reference',
+        'buyerName',
+        'buyerEmail',
+        'buyerPhone',
+        'tierId',
+        'tierName',
+        'quantity',
+        'guestsAdmitted',
+        'amountPaid',
+        'serviceFee',
+        'timestamp',
+        'checkedIn',
+        'paymentMethod'
+      ];
+    }
+
+    function ticketRequiredKeys() {
+      return [
+        'ticketId',
+        'reference',
+        'buyerName',
+        'buyerEmail',
+        'buyerPhone',
+        'tierId',
+        'quantity',
+        'amountPaid',
+        'timestamp',
+        'checkedIn'
+      ];
+    }
+
+    function isValidTicketCreate(ticketId) {
+      let data = request.resource.data;
+      return (
+        // Schema Validation
+        data.keys().hasAll(ticketRequiredKeys()) &&
+        data.keys().hasOnly(ticketAllowedKeys()) &&
+
+        // ID match
+        data.ticketId is string &&
+        data.ticketId == ticketId &&
+        data.ticketId.size() >= 5 &&
+        data.ticketId.size() <= 40 &&
+
+        // Attendee contact info bounds
+        data.buyerName is string &&
+        data.buyerName.size() >= 2 &&
+        data.buyerName.size() <= 100 &&
+
+        data.buyerEmail is string &&
+        data.buyerEmail.size() <= 100 &&
+        isValidEmail(data.buyerEmail) &&
+
+        data.buyerPhone is string &&
+        data.buyerPhone.size() >= 5 &&
+        data.buyerPhone.size() <= 30 &&
+
+        // Tier and reference
+        data.tierId is string &&
+        data.tierId.size() >= 1 &&
+        data.tierId.size() <= 50 &&
+
+        data.reference is string &&
+        data.reference.size() >= 3 &&
+        data.reference.size() <= 100 &&
+
+        // Numerical limits
+        (data.quantity is int || data.quantity is float) &&
+        data.quantity >= 1 &&
+        data.quantity <= 50 &&
+
+        (data.amountPaid is int || data.amountPaid is float) &&
+        data.amountPaid >= 0 &&
+        data.amountPaid <= 50000000 &&
+
+        // Attendee cannot mark ticket checked-in on creation
+        data.checkedIn is bool &&
+        data.checkedIn == false &&
+
+        isValidTimestampString(data.timestamp) &&
+
+        // Optional fields
+        (!('tierName' in data) || (data.tierName is string && data.tierName.size() <= 100)) &&
+        (!('guestsAdmitted' in data) || ((data.guestsAdmitted is int || data.guestsAdmitted is float) && data.guestsAdmitted >= 1 && data.guestsAdmitted <= 200)) &&
+        (!('serviceFee' in data) || ((data.serviceFee is int || data.serviceFee is float) && data.serviceFee >= 0 && data.serviceFee <= 1000000)) &&
+        (!('paymentMethod' in data) || (data.paymentMethod is string && data.paymentMethod.size() <= 50))
+      );
+    }
+
+    function isValidTicketUpdate() {
+      let data = request.resource.data;
+      let existing = resource.data;
+      return (
+        data.keys().hasOnly(ticketAllowedKeys()) &&
+        data.ticketId == existing.ticketId &&
+        data.reference == existing.reference &&
+        data.buyerName == existing.buyerName &&
+        data.buyerEmail == existing.buyerEmail &&
+        data.buyerPhone == existing.buyerPhone &&
+        data.tierId == existing.tierId &&
+        data.amountPaid == existing.amountPaid &&
+        data.quantity == existing.quantity &&
+        data.timestamp == existing.timestamp &&
+        data.checkedIn is bool
+      );
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // 1. Public Event Details: Collection 'events_public' and '/events'
+    match /events_public/{eventId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin() || isValidPublicInventoryUpdate();
+      allow delete: if isAdmin();
+    }
+
+    match /events/{eventId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin() || isValidPublicInventoryUpdate();
+      allow delete: if isAdmin();
+    }
+
+    // 2. Individual Ticket Passes: Collection 'tickets'
+    match /tickets/{ticketId} {
+      // Individual lookup by exact Ticket ID for attendees
+      allow get: if true;
+
+      // Live Transaction Log & Gate Check-In Registry:
+      // Permits authenticated sessions (including PIN-unlocked organizers via anonymous auth and email admins)
+      // to stream and query ticket transactions while blocking unauthenticated public scrapers.
+      allow list: if isAuthenticated();
+
+      // Purchase validation
+      allow create: if isValidTicketCreate(ticketId);
+
+      // Gate check-in status update:
+      // Allows authenticated gate staff/organizers to toggle checkedIn status,
+      // while enforcing isValidTicketUpdate() so all attendee details, tiers, and amounts remain immutable.
+      allow update: if isAuthenticated() && isValidTicketUpdate();
+
+      // Deletion strictly reserved for administrators
+      allow delete: if isAdmin();
+    }
+
+    // 3. Admin Private Ledger: Collection 'events_admin'
+    match /events_admin/{adminDoc} {
+      allow read, write: if isAdmin();
+    }
+
+    // 4. Default Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

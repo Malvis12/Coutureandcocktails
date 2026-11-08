@@ -12,7 +12,15 @@ Couture & Cocktails is a luxury soirée and high-fashion ticketing platform buil
 - **Native Digital Passes:** Instant client-side scannable QR generation (via Canvas/QRious) with high-res PNG pass downloads.
 - **Production Hardened:** Zero local storage leakage, Stored XSS sanitization, and strict Firestore Security Rules.
 
+## Deployment on Vercel
+1. Import this GitHub repository into your [Vercel Dashboard](https://vercel.com/new).
+2. Framework Preset: **Other** (Static HTML).
+3. Root Directory: `./` (leave default).
+4. Click **Deploy**. Vercel will automatically serve `index.html` at your root domain with production security headers configured via `vercel.json`.
+
 ## Files
-- `couture_cocktails_event_platform.html` — Main production single-file application.
+- `index.html` — Primary static site entry point for Vercel deployment.
+- `vercel.json` — Vercel routing configuration and production HTTP security headers.
+- `couture_cocktails_event_platform.html` — Event platform source.
 - `firestore.rules` — Production Cloud Firestore security rules.
-- `firebase.json` — Firebase CLI project configuration.
+- `firebase.json` — Firebase CLI configuration.

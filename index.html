@@ -1,0 +1,2942 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Couture & Cocktails — Ticket Sales & Event Portal</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts matching the Flyer Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Official Paystack Inline Script -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+
+    <!-- Client-Side Standalone QR Code Generator (Zero External Leakage) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        crimson: {
+                            950: '#240202',
+                            900: '#3B0404',
+                            800: '#5A0707',
+                            700: '#7A0909',
+                            600: '#990F0F',
+                        },
+                        gold: {
+                            100: '#FBF3D5',
+                            200: '#F5E3A9',
+                            300: '#EBD07A',
+                            400: '#DFB748',
+                            500: '#C99B27',
+                            600: '#A67B16',
+                        },
+                        cream: {
+                            50: '#FFFDF9',
+                            100: '#FAF3E6',
+                            200: '#F2E4CE',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+                        script: ['"Great Vibes"', 'cursive'],
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ========================================================== */
+        /* EMIL KOWALSKI DESIGN ENGINEERING SYSTEM: EASINGS & POLISH   */
+        /* ========================================================== */
+        :root {
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+            --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+            --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+            --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Custom Luxury Styling & Perforated Ticket Effects */
+        body {
+            background-color: #240202;
+            color: #FFFDF9;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Responsive Emil Kowalski Press Feedback (Instant, tactile) */
+        button, [role="button"], a {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .btn-press {
+            transition: transform 160ms var(--ease-out), filter 160ms var(--ease-out);
+            will-change: transform;
+        }
+        .btn-press:active {
+            transform: scale(0.97);
+        }
+
+        /* Velvet Drape Background Texture Effect */
+        .velvet-bg {
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(153, 15, 15, 0.45) 0%, transparent 45%),
+                radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(122, 9, 9, 0.5) 0%, transparent 60%),
+                linear-gradient(160deg, #1E0101 0%, #3D0404 45%, #1A0101 100%);
+        }
+
+        .cream-silk-bg {
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(235, 208, 122, 0.25) 0%, transparent 50%),
+                linear-gradient(180deg, #FFFDF9 0%, #F7EBDD 100%);
+        }
+
+        /* Metallic Gold Gradient Text & Borders */
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FBF3D5 0%, #DFB748 45%, #A67B16 75%, #F5E3A9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-foil-bg {
+            background: linear-gradient(135deg, #F5E3A9 0%, #DFB748 50%, #B88917 100%);
+        }
+
+        .cream-ticket-bg {
+            background: linear-gradient(135deg, #FFFDF9 0%, #F5E6C8 100%);
+        }
+
+        /* Flyer-Accurate Perforated Ticket Stub Edges with Hardware Acceleration */
+        .flyer-ticket-row {
+            position: relative;
+            transition: transform 200ms var(--ease-out), filter 200ms var(--ease-out);
+            filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+            will-change: transform;
+            touch-action: manipulation;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .flyer-ticket-row:hover {
+                transform: translateY(-3px) scale(1.01);
+                filter: drop-shadow(0 18px 32px rgba(212, 175, 55, 0.22));
+            }
+        }
+
+        .flyer-ticket-row:active {
+            transform: scale(0.98);
+        }
+
+        /* Left & Right Scallop Perforations */
+        .ticket-perforated {
+            position: relative;
+        }
+        .ticket-perforated::before,
+        .ticket-perforated::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 22px;
+            height: 22px;
+            background-color: #2A0202;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+        }
+        .ticket-perforated::before {
+            left: -11px;
+        }
+        .ticket-perforated::after {
+            right: -11px;
+        }
+
+        /* iOS-like Bottom Sheet Transitions on Mobile */
+        .modal-sheet-panel {
+            transition: transform 280ms var(--ease-drawer), opacity 220ms var(--ease-out);
+        }
+
+        /* Hide Scrollbar for Horizontal Touch Tabs */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1E0101;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #7A0909;
+            border-radius: 3px;
+            border: 1px solid rgba(223, 183, 72, 0.3);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #DFB748;
+        }
+
+        /* Print Media Styles for Digital Ticket */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-ticket-area, #printable-ticket-area * {
+                visibility: visible;
+            }
+            #printable-ticket-area {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                background: #fff !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(223, 183, 72, 0.3); }
+            50% { box-shadow: 0 0 28px rgba(223, 183, 72, 0.65); }
+        }
+        .glow-gold {
+            animation: pulseGlow 3s infinite;
+        }
+    </style>
+</head>
+<body class="velvet-bg min-h-screen flex flex-col selection:bg-gold-400 selection:text-crimson-950">
+
+    <!-- Top Announcement Bar (Controlled by Admin CMS) -->
+    <div id="announcement-bar" class="hidden bg-gradient-to-r from-crimson-900 via-crimson-800 to-crimson-900 border-b border-gold-400/30 text-gold-200 text-xs sm:text-sm py-2 px-4 text-center font-medium tracking-wide">
+        <!-- Injected by reactive state -->
+    </div>
+
+    <!-- Sticky Navigation Bar -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-crimson-950/90 border-b border-gold-400/20">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
+            <!-- Brand Identity -->
+            <a href="#" onclick="app.setView('public'); return false;" class="flex items-center gap-2 sm:gap-3 group shrink-0">
+                <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl gold-foil-bg flex items-center justify-center text-crimson-950 shadow-md group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-martini-glass-citrus text-base sm:text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-baseline gap-1">
+                        <span id="nav-title-serif" class="font-serif font-bold text-lg sm:text-2xl tracking-wider text-cream-50">COUTURE &</span>
+                        <span id="nav-title-script" class="font-script text-xl sm:text-3xl text-gold-400">Cocktails</span>
+                    </div>
+                    <p id="nav-organizers" class="text-[9px] uppercase tracking-[0.2em] text-gold-200/75 hidden md:block">YAMEN PROJETTI CONCEPT X CUSTOM KRAFT</p>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <div class="flex items-center gap-1.5 sm:gap-3">
+                <button onclick="app.scrollToSection('tickets-section')" id="nav-btn-tickets" class="px-2.5 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-cream-100 hover:text-gold-300 hover:bg-white/5 btn-press">
+                    <i class="fa-solid fa-ticket mr-1 text-gold-400"></i>Tickets
+                </button>
+                <button onclick="app.scrollToSection('lookup-section')" id="nav-btn-verify" class="px-2.5 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-cream-100 hover:text-gold-300 hover:bg-white/5 btn-press">
+                    <i class="fa-solid fa-qrcode mr-1 text-gold-400"></i><span class="hidden sm:inline">My </span>Pass
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: PUBLIC EVENT & TICKETING FRONTEND -->
+    <!-- ========================================== -->
+    <main id="public-view" class="flex-grow">
+        
+        <!-- HERO FLYER SHOWCASE SECTION -->
+        <section class="relative py-10 sm:py-16 lg:py-20 overflow-hidden">
+            <!-- Decorative Ambient Glows -->
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-crimson-600/25 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute top-1/3 -right-24 w-96 h-96 bg-gold-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+                    
+                    <!-- Left Column: High-Luxury Event Details & Countdown -->
+                    <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+                        <!-- Organizers Pill -->
+                        <div class="inline-flex flex-wrap items-center justify-center lg:justify-start gap-2 px-4 py-2 rounded-full bg-crimson-900/90 border border-gold-400/35 shadow-inner">
+                            <span class="w-2 h-2 rounded-full bg-gold-400"></span>
+                            <span id="hero-organizers" class="text-xs sm:text-sm font-bold tracking-[0.15em] uppercase text-gold-200">
+                                YAMEN PROJETTI CONCEPT X CUSTOM KRAFT
+                            </span>
+                        </div>
+
+                        <!-- Main Title Block -->
+                        <div class="space-y-1">
+                            <h1 class="font-serif font-bold text-5xl sm:text-6xl lg:text-7xl tracking-tight text-cream-50 leading-none">
+                                <span id="hero-title-main">COUTURE</span> <span class="text-gold-400 font-serif text-4xl sm:text-5xl">&</span>
+                            </h1>
+                            <div id="hero-title-script" class="font-script text-6xl sm:text-7xl lg:text-8xl text-gold-400 -mt-2 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+                                Cocktails
+                            </div>
+                        </div>
+
+                        <!-- Tagline -->
+                        <p id="hero-tagline" class="text-sm sm:text-base uppercase tracking-[0.22em] text-gold-200/90 font-semibold border-y border-gold-400/25 py-3 max-w-xl mx-auto lg:mx-0">
+                            AN EVENING OF ELEGANCE, FASHION & FINE HUMOUR
+                        </p>
+
+                        <!-- About / Description from CMS -->
+                        <p id="hero-description" class="text-cream-100/85 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
+                            Experience Benin City's most anticipated luxury soirée. Join industry tastemakers, couture connoisseurs, and comedic royalty for an unforgettable red-carpet night of high fashion, signature cocktails, and electric vibes.
+                        </p>
+
+                        <!-- Event Date & Location Badges (Direct from Flyer) -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 max-w-xl mx-auto lg:mx-0">
+                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-crimson-900/70 border border-gold-400/30 backdrop-blur-md">
+                                <div class="w-12 h-12 rounded-xl gold-foil-bg flex items-center justify-center text-crimson-950 shrink-0 shadow-md">
+                                    <i class="fa-regular fa-calendar-check text-2xl"></i>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-[11px] uppercase tracking-widest text-gold-300 font-semibold">Event Date & Time</div>
+                                    <div id="hero-date-display" class="text-lg sm:text-xl font-extrabold text-cream-50">DEC 28TH, 2026.</div>
+                                    <div id="hero-time-display" class="text-xs text-gold-200/80">Red Carpet: 5:00 PM Prompt</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-crimson-900/70 border border-gold-400/30 backdrop-blur-md">
+                                <div class="w-12 h-12 rounded-xl gold-foil-bg flex items-center justify-center text-crimson-950 shrink-0 shadow-md">
+                                    <i class="fa-solid fa-location-dot text-2xl"></i>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-[11px] uppercase tracking-widest text-gold-300 font-semibold">Location</div>
+                                    <div id="hero-location-display" class="text-lg sm:text-xl font-extrabold text-cream-50">BENIN CITY, EDO STATE.</div>
+                                    <div id="hero-venue-display" class="text-xs text-gold-200/80 truncate max-w-[180px]">The Royal Marquee, GRA</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Countdown Timer to Dec 28, 2026 -->
+                        <div class="pt-2 max-w-xl mx-auto lg:mx-0">
+                            <div class="text-xs uppercase tracking-[0.2em] text-gold-300/80 mb-2.5 font-semibold flex items-center justify-center lg:justify-start gap-2">
+                                <i class="fa-regular fa-clock text-gold-400"></i> Countdown to the Soirée
+                            </div>
+                            <div class="grid grid-cols-4 gap-2.5 sm:gap-4" id="countdown-container">
+                                <div class="bg-crimson-950/90 border border-gold-400/25 rounded-2xl p-3 text-center">
+                                    <div id="cd-days" class="text-2xl sm:text-3xl font-extrabold gold-gradient-text">00</div>
+                                    <div class="text-[10px] uppercase tracking-widest text-cream-200/70 mt-0.5">Days</div>
+                                </div>
+                                <div class="bg-crimson-950/90 border border-gold-400/25 rounded-2xl p-3 text-center">
+                                    <div id="cd-hours" class="text-2xl sm:text-3xl font-extrabold gold-gradient-text">00</div>
+                                    <div class="text-[10px] uppercase tracking-widest text-cream-200/70 mt-0.5">Hours</div>
+                                </div>
+                                <div class="bg-crimson-950/90 border border-gold-400/25 rounded-2xl p-3 text-center">
+                                    <div id="cd-mins" class="text-2xl sm:text-3xl font-extrabold gold-gradient-text">00</div>
+                                    <div class="text-[10px] uppercase tracking-widest text-cream-200/70 mt-0.5">Minutes</div>
+                                </div>
+                                <div class="bg-crimson-950/90 border border-gold-400/25 rounded-2xl p-3 text-center">
+                                    <div id="cd-secs" class="text-2xl sm:text-3xl font-extrabold gold-gradient-text">00</div>
+                                    <div class="text-[10px] uppercase tracking-widest text-cream-200/70 mt-0.5">Seconds</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Primary Call To Action Buttons -->
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
+                            <button onclick="app.scrollToSection('tickets-section')" class="w-full sm:w-auto px-8 py-4 rounded-2xl gold-foil-bg text-crimson-950 font-extrabold text-base tracking-wide shadow-xl hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3 glow-gold">
+                                <i class="fa-solid fa-ticket-simple text-lg"></i>
+                                <span>PURCHASE TICKETS NOW</span>
+                            </button>
+                            <button onclick="app.scrollToSection('lookup-section')" class="w-full sm:w-auto px-6 py-4 rounded-2xl bg-crimson-900/80 hover:bg-crimson-800 text-gold-200 font-bold text-base border border-gold-400/40 transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <span>Retrieve Digital Pass</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Flyer-Styled Digital Poster Card -->
+                    <div class="lg:col-span-6">
+                        <div class="relative mx-auto max-w-lg rounded-3xl p-1 gold-foil-bg shadow-[0_25px_70px_rgba(0,0,0,0.75)]">
+                            <div class="rounded-[22px] cream-silk-bg text-crimson-950 p-6 sm:p-8 relative overflow-hidden">
+                                
+                                <!-- Decorative Crimson Velvet Corner Wave -->
+                                <div class="absolute -bottom-16 -left-16 w-56 h-56 bg-crimson-800 rounded-full opacity-15 pointer-events-none"></div>
+                                <div class="absolute -top-12 -right-12 w-40 h-40 bg-gold-400 rounded-full opacity-20 pointer-events-none"></div>
+
+                                <!-- Flyer Top Header -->
+                                <div class="grid grid-cols-12 items-center gap-3 pb-5 border-b border-crimson-900/20">
+                                    <div class="col-span-7 pr-2 border-r border-crimson-900/30">
+                                        <div id="flyer-organizers" class="font-extrabold text-[11px] sm:text-xs tracking-wider uppercase text-crimson-950 leading-tight">
+                                            YAMEN PROJETTI CONCEPT <span class="text-crimson-700 mx-1">X</span> CUSTOM KRAFT
+                                        </div>
+                                        <div id="flyer-tagline" class="text-[8px] sm:text-[9px] tracking-[0.14em] uppercase text-crimson-800 font-semibold mt-1.5 pt-1.5 border-t border-crimson-900/15">
+                                            AN EVENING OF ELEGANCE, FASHION & FINE HUMOUR
+                                        </div>
+                                    </div>
+                                    <div class="col-span-5 text-right pl-1">
+                                        <div class="font-serif font-bold text-xl sm:text-2xl text-crimson-900 tracking-wide leading-none">COUTURE<span class="text-sm">&</span></div>
+                                        <div class="font-script text-3xl sm:text-4xl text-crimson-700 -mt-1 leading-none">Cocktails</div>
+                                    </div>
+                                </div>
+
+                                <!-- Flyer "Ticket Sales" Centerpiece -->
+                                <div class="text-center my-5 relative">
+                                    <div class="inline-block relative">
+                                        <i class="fa-solid fa-ticket text-gold-500 text-2xl sm:text-3xl absolute -left-8 -top-2 -rotate-12 opacity-90"></i>
+                                        <h2 class="font-serif font-extrabold text-5xl sm:text-6xl text-crimson-900 tracking-tight leading-none">
+                                            Ticket
+                                        </h2>
+                                        <div class="font-script text-5xl sm:text-6xl text-gold-600 -mt-5 drop-shadow-sm">
+                                            Sales
+                                        </div>
+                                    </div>
+                                    <p class="text-[11px] uppercase tracking-widest text-crimson-800/80 font-bold mt-1">
+                                        Click any ticket tier below to book instantly
+                                    </p>
+                                </div>
+
+                                <!-- Stack of Perforated Flyer Tickets (Dynamically Rendered from State) -->
+                                <div id="flyer-ticket-stack" class="space-y-2.5 my-4">
+                                    <!-- Populated via JavaScript -->
+                                </div>
+
+                                <!-- Flyer Footer Info -->
+                                <div class="mt-6 pt-4 border-t border-crimson-900/20 bg-crimson-950 text-cream-50 -mx-6 sm:-mx-8 -mb-6 sm:-mb-8 p-5 sm:p-6">
+                                    <div class="grid grid-cols-2 gap-3 items-center pb-4">
+                                        <div class="flex items-center gap-2.5 border-r border-gold-400/30 pr-2">
+                                            <i class="fa-regular fa-calendar-days text-gold-400 text-2xl"></i>
+                                            <div>
+                                                <div id="flyer-date" class="font-extrabold text-sm sm:text-base leading-tight tracking-wide">DEC 28TH, 2026.</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 pl-2">
+                                            <i class="fa-solid fa-location-dot text-gold-400 text-2xl"></i>
+                                            <div>
+                                                <div id="flyer-location" class="font-extrabold text-xs sm:text-sm leading-tight uppercase">BENIN CITY, EDO STATE.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <span id="flyer-vibe-pill" class="inline-block px-5 py-1.5 rounded-full border border-gold-400/60 text-[10px] sm:text-xs tracking-[0.25em] uppercase text-gold-200 font-semibold">
+                                            FASHION • COCKTAILS • GOOD VIBES
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================= -->
+        <!-- INTERACTIVE TICKET SELECTION & LIVE INVENTORY SECTION   -->
+        <!-- ======================================================= -->
+        <section id="tickets-section" class="py-14 sm:py-20 border-t border-gold-400/15 bg-black/25">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                    <div>
+                        <span class="text-xs uppercase tracking-[0.25em] text-gold-400 font-bold block mb-2">
+                            <i class="fa-solid fa-crown mr-1.5"></i>Official Box Office
+                        </span>
+                        <h2 class="font-serif font-bold text-3xl sm:text-5xl text-cream-50">
+                            Select Your <span class="font-script text-gold-400 text-4xl sm:text-6xl ml-1">Experience</span>
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- Detailed Ticket Cards Grid -->
+                <div id="detailed-tickets-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Populated via JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================= -->
+        <!-- RETRIEVE / VERIFY DIGITAL TICKET SECTION                -->
+        <!-- ======================================================= -->
+        <section id="lookup-section" class="py-16 sm:py-20 border-t border-gold-400/15">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="rounded-3xl bg-gradient-to-br from-crimson-900/90 via-crimson-950 to-black p-6 sm:p-10 border border-gold-400/35 shadow-2xl relative overflow-hidden">
+                    <div class="relative z-10 text-center max-w-2xl mx-auto space-y-4">
+                        <div class="w-14 h-14 rounded-2xl gold-foil-bg text-crimson-950 flex items-center justify-center mx-auto text-2xl shadow-lg">
+                            <i class="fa-solid fa-qrcode"></i>
+                        </div>
+                        <h3 class="font-serif font-bold text-3xl sm:text-4xl text-cream-50">
+                            Already Purchased a Ticket?
+                        </h3>
+                        <p class="text-sm sm:text-base text-cream-200/80">
+                            Enter your <strong>Ticket ID</strong> (e.g., <code class="text-gold-300 bg-black/40 px-2 py-0.5 rounded">CC-2026-XXXX</code>), <strong>Buyer Email</strong>, or <strong>Paystack Reference</strong> to view, download, or print your digital pass anytime.
+                        </p>
+
+                        <form onsubmit="app.handleTicketLookup(event)" class="pt-3 flex flex-col sm:flex-row gap-3">
+                            <input 
+                                type="text" 
+                                id="ticket-lookup-input" 
+                                aria-label="Ticket ID, Buyer Email, or Paystack Reference"
+                                placeholder="Enter Ticket ID (CC-2026-...), Email, or Phone..." 
+                                required
+                                class="flex-grow px-5 py-4 rounded-2xl bg-black/50 border border-gold-400/40 text-cream-50 placeholder-cream-200/40 focus:outline-none focus:border-gold-400 text-sm sm:text-base"
+                            >
+                            <button type="submit" class="px-8 py-4 rounded-2xl gold-foil-bg text-crimson-950 font-extrabold text-sm sm:text-base hover:brightness-110 transition-all shrink-0 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-ticket"></i>
+                                <span>Retrieve Ticket</span>
+                            </button>
+                        </form>
+
+                        <div id="lookup-sample-hint" class="pt-2 text-xs text-gold-300/80"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EVENT GUIDELINES & DRESS CODE SECTION -->
+        <section class="py-12 border-t border-gold-400/15 bg-black/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-6 rounded-2xl bg-crimson-950/60 border border-gold-400/20 flex items-start gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-gold-400/15 border border-gold-400/40 flex items-center justify-center text-gold-400 shrink-0">
+                        <i class="fa-solid fa-user-tie text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gold-300 text-sm uppercase tracking-wider">Dress Code</h4>
+                        <p id="info-dresscode" class="text-sm text-cream-100/80 mt-1">High Couture, Black Tie, or Luxury Traditional Elegance. Strictly no streetwear.</p>
+                    </div>
+                </div>
+                <div class="p-6 rounded-2xl bg-crimson-950/60 border border-gold-400/20 flex items-start gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-gold-400/15 border border-gold-400/40 flex items-center justify-center text-gold-400 shrink-0">
+                        <i class="fa-solid fa-shield-halved text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gold-300 text-sm uppercase tracking-wider">Gate Verification</h4>
+                        <p class="text-sm text-cream-100/80 mt-1">Present your Digital Ticket QR Code or Ticket ID at the VIP check-in desk for instant electronic validation.</p>
+                    </div>
+                </div>
+                <div class="p-6 rounded-2xl bg-crimson-950/60 border border-gold-400/20 flex items-start gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-gold-400/15 border border-gold-400/40 flex items-center justify-center text-gold-400 shrink-0">
+                        <i class="fa-solid fa-headset text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gold-300 text-sm uppercase tracking-wider">Table Inquiries & RSVP</h4>
+                        <p id="info-contact" class="text-sm text-cream-100/80 mt-1">For custom table arrangements or sponsorship: +234 800 COUTURE • info@couturecocktails.ng</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================================== -->
+    <!-- VIEW 2: FULL-CONTROL ADMIN PANEL (ANALYTICS + CMS + STOCK) -->
+    <!-- ========================================================== -->
+    <section id="admin-view" class="hidden flex-grow py-8 sm:py-12 bg-neutral-950/90">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            
+            <!-- Admin Header Bar -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-gold-400/25">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-400/15 border border-gold-400/30 text-gold-300 text-xs font-bold uppercase tracking-widest">
+                            <i class="fa-solid fa-bolt"></i> Executive Command Center
+                        </div>
+                        <div id="admin-user-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs font-semibold">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span id="admin-user-email">PIN Mode</span>
+                        </div>
+                    </div>
+                    <h1 class="font-serif font-bold text-3xl sm:text-4xl text-cream-50">
+                        Couture & Cocktails — Admin Studio
+                    </h1>
+                    <p class="text-sm text-cream-200/70">
+                        Track Paystack revenue, manage remaining ticket capacity, verify guests at the gate, and control every text on the frontend.
+                    </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <button onclick="app.openManualSaleModal()" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm btn-press flex items-center gap-2 shadow-lg">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <span>Offline Sale</span>
+                    </button>
+                    <button onclick="app.exportTransactionsCSV()" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-cream-50 font-semibold text-xs sm:text-sm border border-white/15 btn-press flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv text-gold-400"></i>
+                        <span>CSV</span>
+                    </button>
+                    <button onclick="app.setView('public')" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl gold-foil-bg text-crimson-950 font-extrabold text-xs sm:text-sm btn-press flex items-center gap-2">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>Live Site</span>
+                    </button>
+                    <button onclick="app.signOutAdmin()" id="admin-signout-btn" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-red-950/60 hover:bg-red-900 text-red-200 font-bold text-xs sm:text-sm border border-red-500/30 btn-press flex items-center gap-1.5" title="Sign out of Admin Studio">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Sign Out</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Sub-Navigation Tabs (Mobile swipeable with smooth overflow) -->
+            <div class="flex overflow-x-auto no-scrollbar gap-2 border-b border-white/10 pb-3 -mx-4 px-4 sm:mx-0 sm:px-0">
+                <button onclick="app.setAdminTab('analytics')" id="adm-tab-analytics" class="px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap btn-press flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>1. Analytics & Transactions</span>
+                </button>
+                <button onclick="app.setAdminTab('inventory')" id="adm-tab-inventory" class="px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap btn-press flex items-center gap-2">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>2. Ticket Pricing & Capacity</span>
+                </button>
+                <button onclick="app.setAdminTab('cms')" id="adm-tab-cms" class="px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap btn-press flex items-center gap-2">
+                    <i class="fa-solid fa-pen-ruler"></i>
+                    <span>3. Frontend CMS & Paystack</span>
+                </button>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ADMIN TAB 1: ANALYTICS & TRANSACTION LOG   -->
+            <!-- ========================================== -->
+            <div id="admin-panel-analytics" class="space-y-6 sm:space-y-8">
+                
+                <!-- Executive KPI Summary Cards (2 Cols on mobile, 4 on desktop) -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                    <div class="p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-crimson-900/90 to-crimson-950 border border-gold-400/30 shadow-xl">
+                        <div class="flex items-center justify-between text-gold-300 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
+                            <span>Revenue</span>
+                            <i class="fa-solid fa-naira-sign text-base sm:text-lg text-gold-400"></i>
+                        </div>
+                        <div id="kpi-revenue" class="text-2xl sm:text-4xl font-extrabold text-cream-50 mt-1 sm:mt-2">₦0</div>
+                        <div id="kpi-revenue-sub" class="text-[10px] sm:text-xs text-emerald-400 mt-1 flex items-center gap-1 truncate">
+                            <i class="fa-solid fa-circle-check"></i> Verified Paid
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-6 rounded-2xl bg-neutral-900/90 border border-white/10 shadow-xl">
+                        <div class="flex items-center justify-between text-cream-200/70 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
+                            <span>Tickets Sold</span>
+                            <i class="fa-solid fa-ticket text-base sm:text-lg text-gold-400"></i>
+                        </div>
+                        <div id="kpi-tickets-sold" class="text-2xl sm:text-4xl font-extrabold text-cream-50 mt-1 sm:mt-2">0</div>
+                        <div id="kpi-tickets-remaining" class="text-[10px] sm:text-xs text-gold-300 mt-1 truncate">0 total remaining</div>
+                    </div>
+
+                    <div class="p-4 sm:p-6 rounded-2xl bg-neutral-900/90 border border-white/10 shadow-xl">
+                        <div class="flex items-center justify-between text-cream-200/70 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
+                            <span>Headcount</span>
+                            <i class="fa-solid fa-users text-base sm:text-lg text-gold-400"></i>
+                        </div>
+                        <div id="kpi-total-guests" class="text-2xl sm:text-4xl font-extrabold text-cream-50 mt-1 sm:mt-2">0</div>
+                        <div id="kpi-checked-in" class="text-[10px] sm:text-xs text-sky-400 mt-1 truncate">0 gate check-ins</div>
+                    </div>
+
+                    <div class="p-4 sm:p-6 rounded-2xl bg-neutral-900/90 border border-white/10 shadow-xl">
+                        <div class="flex items-center justify-between text-cream-200/70 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
+                            <span>Sell-Through</span>
+                            <i class="fa-solid fa-fire-flame-curved text-base sm:text-lg text-gold-400"></i>
+                        </div>
+                        <div id="kpi-capacity-pct" class="text-2xl sm:text-4xl font-extrabold text-gold-400 mt-1 sm:mt-2">0%</div>
+                        <div class="w-full h-1.5 sm:h-2 bg-white/10 rounded-full overflow-hidden mt-2">
+                            <div id="kpi-capacity-bar" class="h-full gold-foil-bg transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue & Inventory Breakdown by Ticket Tier -->
+                <div class="p-6 rounded-2xl bg-neutral-900/90 border border-white/10 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg text-cream-50 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-column text-gold-400"></i>
+                            <span>Tier-by-Tier Performance & Remaining Stock Analysis</span>
+                        </h3>
+                        <button onclick="app.setAdminTab('inventory')" class="text-xs text-gold-400 hover:underline font-semibold">
+                            Adjust Capacities <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                    <div id="admin-tier-analytics-bars" class="grid grid-cols-1 md:grid-cols-5 gap-4 pt-2">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- Transactions & Gate Check-In Table -->
+                <div class="p-6 rounded-2xl bg-neutral-900/90 border border-white/10 space-y-5">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-cream-50 flex items-center gap-2">
+                                <i class="fa-solid fa-receipt text-gold-400"></i>
+                                <span>Live Transaction Log & Gate Check-In Registry</span>
+                            </h3>
+                            <p class="text-xs text-cream-200/60">
+                                Every buyer who pays receives a digital pass. Click "Check In" at the event entrance or "View Pass" to re-issue their ticket.
+                            </p>
+                        </div>
+
+                        <!-- Search & Tier Filter Controls -->
+                        <div class="flex flex-col sm:flex-row gap-2.5">
+                            <div class="relative">
+                                <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-cream-200/40 text-xs"></i>
+                                <input 
+                                    type="text" 
+                                    id="admin-tx-search" 
+                                    aria-label="Search transactions by name, ticket ID, reference, or email"
+                                    oninput="app.renderAdminTransactions()" 
+                                    placeholder="Search name, ID, ref, email..." 
+                                    class="pl-9 pr-4 py-2 rounded-xl bg-black/60 border border-white/15 text-xs sm:text-sm text-cream-50 focus:outline-none focus:border-gold-400"
+                                >
+                            </div>
+                            <select 
+                                id="admin-tx-filter-tier" 
+                                aria-label="Filter transactions by ticket tier"
+                                onchange="app.renderAdminTransactions()" 
+                                class="px-3 py-2 rounded-xl bg-black/60 border border-white/15 text-xs sm:text-sm text-cream-50 focus:outline-none focus:border-gold-400"
+                            >
+                                <option value="ALL">All Ticket Tiers</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-white/10">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-black/60 text-[11px] uppercase tracking-wider text-gold-300 border-b border-white/10">
+                                    <th class="py-3.5 px-4">Ticket ID & Ref</th>
+                                    <th class="py-3.5 px-4">Buyer Details</th>
+                                    <th class="py-3.5 px-4">Tier & Guests</th>
+                                    <th class="py-3.5 px-4">Amount Paid</th>
+                                    <th class="py-3.5 px-4">Date</th>
+                                    <th class="py-3.5 px-4">Gate Status</th>
+                                    <th class="py-3.5 px-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-tx-tbody" class="divide-y divide-white/10 text-xs sm:text-sm">
+                                <!-- Populated via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ADMIN TAB 2: INVENTORY & PRICING MANAGER   -->
+            <!-- ========================================== -->
+            <div id="admin-panel-inventory" class="hidden space-y-6">
+                <div class="p-6 rounded-2xl bg-neutral-900/90 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-xl text-cream-50">Manage Ticket Tiers, Prices & Available Stock</h3>
+                        <p class="text-xs sm:text-sm text-cream-200/70">
+                            Update how many tickets are left, change prices in Naira (₦), edit guest admissions, or mark any tier as Sold Out. Changes reflect immediately on the public site.
+                        </p>
+                    </div>
+                    <button onclick="app.addNewTicketTier()" class="px-4 py-2.5 rounded-xl gold-foil-bg text-crimson-950 font-extrabold text-xs sm:text-sm shrink-0 flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Add Custom Tier
+                    </button>
+                </div>
+
+                <div id="admin-inventory-list" class="grid grid-cols-1 gap-5">
+                    <!-- Populated dynamically with editable cards for each tier -->
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ADMIN TAB 3: FULL FRONTEND CMS & PAYSTACK  -->
+            <!-- ========================================== -->
+            <div id="admin-panel-cms" class="hidden space-y-6">
+                <form onsubmit="app.saveCMSConfig(event)" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Left Column: Event Branding, Text & Dates -->
+                    <div class="lg:col-span-7 p-6 rounded-2xl bg-neutral-900/90 border border-white/10 space-y-5">
+                        <h3 class="font-bold text-lg text-gold-400 flex items-center gap-2 border-b border-white/10 pb-3">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>Frontend Content Management (Control Everything)</span>
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="cms-title-main" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Main Title (Serif)</label>
+                                <input type="text" id="cms-title-main" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+                            <div>
+                                <label for="cms-title-script" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Script Subtitle</label>
+                                <input type="text" id="cms-title-script" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="cms-organizers" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Organizers Header</label>
+                            <input type="text" id="cms-organizers" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                        </div>
+
+                        <div>
+                            <label for="cms-tagline" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Event Tagline</label>
+                            <input type="text" id="cms-tagline" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                        </div>
+
+                        <div>
+                            <label for="cms-description" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Hero About / Event Description</label>
+                            <textarea id="cms-description" rows="3" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="cms-date-text" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Display Date Text (On Flyer)</label>
+                                <input type="text" id="cms-date-text" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+                            <div>
+                                <label for="cms-time-text" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Red Carpet / Time Text</label>
+                                <input type="text" id="cms-time-text" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="cms-location-text" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">City & State (On Flyer)</label>
+                                <input type="text" id="cms-location-text" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+                            <div>
+                                <label for="cms-venue-text" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Exact Venue Name / Address</label>
+                                <input type="text" id="cms-venue-text" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="cms-announcement" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Top Announcement Banner</label>
+                                <input type="text" id="cms-announcement" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+                            <div>
+                                <label for="cms-vibe-pill" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Flyer Bottom Vibe Pill</label>
+                                <input type="text" id="cms-vibe-pill" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="cms-dresscode" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Dress Code Policy</label>
+                                <input type="text" id="cms-dresscode" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+                            <div>
+                                <label for="cms-contact" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">RSVP / Support Contact Line</label>
+                                <input type="text" id="cms-contact" required class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Paystack Gateway Keys & Security -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="p-6 rounded-2xl bg-neutral-900/90 border border-gold-400/30 space-y-4">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                                <h3 class="font-bold text-lg text-gold-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                    <span>Paystack Payment Gateway</span>
+                                </h3>
+                                <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 text-[11px] font-bold">NGN (₦)</span>
+                            </div>
+
+                            <p class="text-xs text-cream-200/75 leading-relaxed">
+                                Paste your <strong>Paystack Public Key</strong> (<code class="text-gold-300">pk_test_...</code> or <code class="text-gold-300">pk_live_...</code>) below. When guests click "Pay with Paystack", the official Paystack checkout popup will charge the exact Naira amount and return the verified payment reference.
+                            </p>
+
+                            <div>
+                                <label for="cms-paystack-key" class="block text-xs uppercase tracking-wider text-gold-300 font-bold mb-1.5">Paystack Public Key</label>
+                                <input 
+                                    type="text" 
+                                    id="cms-paystack-key" 
+                                    placeholder="pk_live_xxxxxxxxxxxxxxxxxxxxxxxx or pk_test_..." 
+                                    class="w-full px-4 py-3 rounded-xl bg-black/70 border border-gold-400/40 text-gold-200 font-mono text-xs sm:text-sm focus:outline-none focus:border-gold-400"
+                                >
+                            </div>
+
+                            <div>
+                                <label for="cms-service-fee" class="block text-xs uppercase tracking-wider text-gold-300 font-bold mb-1.5">Checkout / Service Fee in Naira (₦)</label>
+                                <input 
+                                    type="number" 
+                                    id="cms-service-fee" 
+                                    min="0" 
+                                    step="100" 
+                                    placeholder="0" 
+                                    class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-emerald-400 font-bold text-sm focus:outline-none focus:border-gold-400"
+                                >
+                                <p class="text-[11px] text-cream-200/60 mt-1">Added to guest order total during checkout (leave 0 for no fee).</p>
+                            </div>
+
+                            <div>
+                                <label for="cms-countdown-iso" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Countdown Target ISO Date</label>
+                                <input 
+                                    type="datetime-local" 
+                                    id="cms-countdown-iso" 
+                                    class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm"
+                                >
+                            </div>
+
+                            <div>
+                                <label for="cms-admin-pin" class="block text-xs uppercase tracking-wider text-cream-200/70 mb-1.5">Admin Access PIN</label>
+                                <input 
+                                    type="text" 
+                                    id="cms-admin-pin" 
+                                    required
+                                    class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm font-mono"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="p-6 rounded-2xl bg-crimson-950/60 border border-gold-400/30 space-y-4">
+                            <button type="submit" class="w-full py-4 rounded-xl gold-foil-bg text-crimson-950 font-extrabold text-base shadow-xl hover:brightness-110 transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span>Save & Publish All Frontend Changes</span>
+                            </button>
+
+                            <button type="button" onclick="app.resetToFactoryDefaults()" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-red-950/60 text-cream-200/70 hover:text-red-300 text-xs font-semibold border border-white/10 transition-all">
+                                <i class="fa-solid fa-rotate-left mr-1"></i> Reset Flyer Defaults
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- MODAL 1: PAYSTACK TICKET CHECKOUT MODAL                    -->
+    <!-- ========================================================== -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md">
+        <div class="relative w-full sm:max-w-lg rounded-t-[32px] sm:rounded-3xl bg-gradient-to-b from-crimson-900 to-crimson-950 border-t sm:border border-gold-400/40 shadow-2xl max-h-[92dvh] sm:max-h-[90vh] flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom,0px)]">
+            
+            <!-- Mobile Sheet Grabber Handle -->
+            <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto mt-3 mb-1 sm:hidden shrink-0"></div>
+
+            <!-- Modal Top Header -->
+            <div class="p-5 sm:p-6 border-b border-gold-400/20 flex items-center justify-between bg-black/30 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl gold-foil-bg text-crimson-950 flex items-center justify-center font-bold shadow-md">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-bold text-xl sm:text-2xl text-cream-50 leading-none">Secure Ticket Checkout</h3>
+                        <p class="text-xs text-gold-300 mt-0.5">Instant Digital Ticket Delivery</p>
+                    </div>
+                </div>
+                <button onclick="app.closeCheckoutModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-cream-100 flex items-center justify-center btn-press">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="app.initiatePaystackPayment(event)" class="p-5 sm:p-6 space-y-4 overflow-y-auto overscroll-contain flex-1">
+                
+                <!-- Selected Ticket Summary Banner -->
+                <div class="p-4 rounded-2xl cream-ticket-bg text-crimson-950 flex items-center justify-between shadow-inner">
+                    <div>
+                        <span class="text-[10px] uppercase tracking-widest font-extrabold text-crimson-700 block">Selected Tier</span>
+                        <h4 id="co-tier-name" class="font-extrabold text-lg sm:text-xl text-crimson-950">VIP FOR 2</h4>
+                        <span id="co-tier-guests" class="text-xs font-semibold text-crimson-800">Admits 2 Guests per ticket</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] uppercase tracking-widest font-bold text-crimson-700 block">Unit Price</span>
+                        <div id="co-tier-price" class="font-extrabold text-xl sm:text-2xl text-crimson-900">₦20,000</div>
+                    </div>
+                </div>
+
+                <!-- Tier Switcher & Quantity Selector -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="sm:col-span-2">
+                        <label for="co-tier-select" class="block text-xs uppercase tracking-wider text-gold-300 font-semibold mb-1">Change Ticket Category</label>
+                        <select id="co-tier-select" onchange="app.onCheckoutTierChange(this.value)" class="w-full px-3.5 py-3 rounded-xl bg-black/50 border border-gold-400/35 text-cream-50 text-base sm:text-sm focus:outline-none focus:border-gold-400">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="co-qty" class="block text-xs uppercase tracking-wider text-gold-300 font-semibold mb-1">Quantity</label>
+                        <div class="flex items-center rounded-xl bg-black/50 border border-gold-400/35 overflow-hidden">
+                            <button type="button" onclick="app.adjustCheckoutQty(-1)" class="px-3.5 py-3 text-gold-300 hover:bg-white/10 font-bold btn-press" aria-label="Decrease ticket quantity">-</button>
+                            <input type="number" id="co-qty" value="1" min="1" max="10" readonly aria-label="Selected ticket quantity" class="w-full text-center bg-transparent text-cream-50 font-bold text-base sm:text-sm focus:outline-none">
+                            <button type="button" onclick="app.adjustCheckoutQty(1)" class="px-3.5 py-3 text-gold-300 hover:bg-white/10 font-bold btn-press" aria-label="Increase ticket quantity">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buyer Personal Information -->
+                <div class="space-y-3.5">
+                    <div>
+                        <label for="co-buyer-name" class="block text-xs uppercase tracking-wider text-cream-200/80 font-semibold mb-1">Buyer Full Name (Printed on Ticket) *</label>
+                        <input type="text" id="co-buyer-name" required placeholder="Enter your full name" class="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/20 text-cream-50 text-base sm:text-sm focus:outline-none focus:border-gold-400">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label for="co-buyer-email" class="block text-xs uppercase tracking-wider text-cream-200/80 font-semibold mb-1">Email Address (For Receipt) *</label>
+                            <input type="email" id="co-buyer-email" required placeholder="you@example.com" class="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/20 text-cream-50 text-base sm:text-sm focus:outline-none focus:border-gold-400">
+                        </div>
+                        <div>
+                            <label for="co-buyer-phone" class="block text-xs uppercase tracking-wider text-cream-200/80 font-semibold mb-1">WhatsApp / Phone Number *</label>
+                            <input type="tel" id="co-buyer-phone" inputmode="tel" required placeholder="0803 000 0000" class="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/20 text-cream-50 text-base sm:text-sm focus:outline-none focus:border-gold-400">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Summary Breakdown -->
+                <div class="p-4 rounded-2xl bg-black/40 border border-gold-400/25 space-y-2">
+                    <div class="flex justify-between text-xs text-cream-200/75">
+                        <span>Total Guests Admitted:</span>
+                        <span id="co-summary-guests" class="font-bold text-gold-300">1 Guest</span>
+                    </div>
+                    <div id="co-fee-row" class="hidden space-y-1 pt-1.5 border-t border-white/10 text-xs text-cream-200/75">
+                        <div class="flex justify-between">
+                            <span>Ticket Subtotal:</span>
+                            <span id="co-summary-subtotal" class="font-semibold text-cream-100">₦0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Service / Checkout Fee:</span>
+                            <span id="co-summary-fee" class="font-semibold text-gold-300">₦0</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-baseline pt-1.5 border-t border-white/10">
+                        <span class="text-sm font-bold text-cream-50">Total Amount Payable:</span>
+                        <span id="co-summary-total" class="text-2xl font-extrabold gold-gradient-text">₦0</span>
+                    </div>
+                </div>
+
+                <!-- Payment Buttons -->
+                <div class="pt-2 sticky bottom-0 bg-gradient-to-t from-crimson-950 via-crimson-950/90 to-transparent pb-1">
+                    <button type="submit" class="w-full py-4 rounded-xl gold-foil-bg text-crimson-950 font-extrabold text-base shadow-xl btn-press flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-credit-card"></i>
+                        <span>Proceed to Secure Payment</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- MODAL 2: DIGITAL TICKET PASS (QR + DOWNLOAD PNG + PRINT)   -->
+    <!-- ========================================================== -->
+    <div id="ticket-pass-modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-lg">
+        <div class="relative w-full max-w-2xl max-h-[94dvh] sm:max-h-[90vh] overflow-y-auto overscroll-contain rounded-t-[32px] sm:rounded-3xl bg-gradient-to-b from-crimson-900 to-crimson-950 border-t sm:border border-gold-400/40 p-4 sm:p-6 space-y-4 shadow-2xl pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
+            
+            <!-- Mobile Sheet Grabber Handle -->
+            <div class="w-12 h-1.5 rounded-full bg-white/25 mx-auto -mt-1 mb-2 sm:hidden shrink-0"></div>
+
+            <!-- Top Confirmation Banner -->
+            <div class="flex items-center justify-between bg-emerald-950/90 border border-emerald-400/40 px-4 sm:px-5 py-3 rounded-2xl text-emerald-200 shadow-lg no-print">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-circle-check text-xl sm:text-2xl text-emerald-400"></i>
+                    <div>
+                        <div class="font-bold text-xs sm:text-base text-white">Official Digital Event Pass Generated!</div>
+                        <div class="text-[11px] sm:text-xs text-emerald-300">Save or screenshot this ticket. Present your Ticket ID or QR Code at the gate.</div>
+                    </div>
+                </div>
+                <button onclick="app.closeTicketPassModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center shrink-0 btn-press">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- THE LUXURY PERFORATED DIGITAL TICKET CARD -->
+            <div id="printable-ticket-area">
+                <div class="rounded-3xl p-1 gold-foil-bg shadow-[0_25px_70px_rgba(0,0,0,0.85)]">
+                    <div class="rounded-[22px] bg-crimson-950 text-cream-50 overflow-hidden grid grid-cols-1 md:grid-cols-12 relative">
+                        
+                        <!-- Left Main Ticket Body (8 Cols) -->
+                        <div class="md:col-span-8 p-5 sm:p-8 flex flex-col justify-between relative border-b md:border-b-0 md:border-r-2 border-dashed border-gold-400/40">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 pb-3 border-b border-gold-400/20">
+                                    <span id="pass-organizers" class="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.18em] text-gold-300">
+                                        YAMEN PROJETTI CONCEPT X CUSTOM KRAFT
+                                    </span>
+                                    <span id="pass-status-badge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider">
+                                        ✓ PAID & VERIFIED
+                                    </span>
+                                </div>
+
+                                <div class="my-3 sm:my-4">
+                                    <div class="flex items-baseline gap-2">
+                                        <span class="font-serif font-bold text-2xl sm:text-4xl text-cream-50">COUTURE &</span>
+                                        <span class="font-script text-3xl sm:text-5xl text-gold-400">Cocktails</span>
+                                    </div>
+                                    <p class="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-gold-200/80">
+                                        AN EVENING OF ELEGANCE, FASHION & FINE HUMOUR
+                                    </p>
+                                </div>
+
+                                <!-- Tier & Admitted Guests Highlight Box -->
+                                <div class="p-3.5 sm:p-4 rounded-2xl cream-ticket-bg text-crimson-950 flex items-center justify-between my-3 sm:my-4 shadow-md">
+                                    <div>
+                                        <div class="text-[9px] sm:text-[10px] uppercase tracking-widest font-bold text-crimson-700">ADMISSION TIER</div>
+                                        <div id="pass-tier-name" class="text-lg sm:text-2xl font-extrabold text-crimson-950 leading-tight">VIP FOR 2</div>
+                                        <div id="pass-guest-count" class="text-xs font-bold text-crimson-800 mt-0.5">Admits 2 Guests</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-[9px] sm:text-[10px] uppercase tracking-widest font-bold text-crimson-700">AMOUNT PAID</div>
+                                        <div id="pass-amount" class="text-base sm:text-xl font-extrabold text-crimson-900">₦20,000</div>
+                                    </div>
+                                </div>
+
+                                <!-- Buyer & Event Metadata Grid -->
+                                <div class="grid grid-cols-2 gap-3 text-xs pt-1">
+                                    <div>
+                                        <span class="text-[10px] uppercase tracking-wider text-gold-300/70 block">Ticket Holder</span>
+                                        <strong id="pass-buyer-name" class="text-xs sm:text-sm text-cream-50 font-bold block truncate">—</strong>
+                                        <div id="pass-buyer-contact" class="text-[10px] sm:text-[11px] text-cream-200/70 truncate">—</div>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] uppercase tracking-wider text-gold-300/70 block">Date & Venue</span>
+                                        <strong id="pass-date" class="text-xs sm:text-sm text-cream-50 font-bold block truncate">—</strong>
+                                        <div id="pass-venue" class="text-[10px] sm:text-[11px] text-cream-200/70 truncate">—</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 mt-4 border-t border-gold-400/20 flex items-center justify-between text-[10px] sm:text-[11px] text-gold-200/75">
+                                <span class="truncate mr-2">Ref: <strong id="pass-ref" class="text-cream-50 font-mono">—</strong></span>
+                                <span id="pass-checkin-state" class="font-bold text-gold-300 whitespace-nowrap">Gate: Ready for Entry</span>
+                            </div>
+                        </div>
+
+                        <!-- Right Perforated QR Stub (4 Cols) -->
+                        <div class="md:col-span-4 p-5 sm:p-6 bg-black/45 flex flex-col items-center justify-center text-center space-y-3">
+                            <div class="text-[10px] uppercase tracking-[0.2em] text-gold-300 font-bold">UNIQUE TICKET ID</div>
+                            <div id="pass-ticket-id" class="px-3.5 py-1.5 rounded-xl bg-gold-400/15 border border-gold-400/50 font-mono font-extrabold text-sm sm:text-lg text-gold-300 tracking-wider">
+                                —
+                            </div>
+
+                            <!-- Dynamic QR Code Container -->
+                            <div class="p-2.5 sm:p-3 rounded-2xl bg-white shadow-inner">
+                                <img id="pass-qr-img" src="" alt="Ticket QR Code" class="w-28 h-28 sm:w-36 sm:h-36 object-contain">
+                            </div>
+
+                            <p class="text-[10px] text-cream-200/60 leading-tight max-w-[160px]">
+                                Scan at the entrance to verify authenticity.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons (Download Image / Print / Close) -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 no-print pt-1">
+                <button onclick="app.downloadTicketAsPNG()" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl gold-foil-bg text-crimson-950 font-extrabold text-sm shadow-xl btn-press flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download Digital Ticket (PNG)</span>
+                </button>
+                <button onclick="window.print()" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-cream-50 font-bold text-sm border border-gold-400/30 btn-press flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print text-gold-400"></i>
+                    <span>Print / Save as PDF</span>
+                </button>
+                <button onclick="app.closeTicketPassModal()" class="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-crimson-950/90 text-cream-200 font-semibold text-sm border border-white/15 btn-press">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- MODAL 3: ADMIN STUDIO AUTHENTICATION MODAL (FIREBASE AUTH)   -->
+    <!-- ========================================================== -->
+    <div id="admin-pin-modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md">
+        <div class="w-full sm:max-w-md rounded-t-[32px] sm:rounded-3xl bg-neutral-900 border-t sm:border border-gold-400/40 p-6 sm:p-8 space-y-5 shadow-2xl pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
+            
+            <!-- Mobile Sheet Grabber Handle -->
+            <div class="w-12 h-1.5 rounded-full bg-white/25 mx-auto -mt-2 mb-2 sm:hidden shrink-0"></div>
+
+            <div class="flex items-center gap-3 border-b border-white/10 pb-4">
+                <div class="w-12 h-12 rounded-2xl gold-foil-bg text-crimson-950 flex items-center justify-center text-xl font-bold shadow-md shrink-0">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div>
+                    <h3 class="font-serif font-bold text-xl sm:text-2xl text-cream-50 leading-tight">Admin Studio Sign-In</h3>
+                    <p class="text-xs text-cream-200/70">Authenticated organizer access for gate check-in & cloud CMS</p>
+                </div>
+            </div>
+
+            <div id="admin-auth-error" class="hidden text-xs text-red-300 bg-red-950/60 p-3 rounded-xl border border-red-500/40 space-y-1">
+                <!-- Dynamic Error Message -->
+            </div>
+
+            <!-- Primary Form: Firebase Auth Email & Password -->
+            <form onsubmit="app.signInAdminWithEmail(event)" id="admin-email-auth-form" class="space-y-3.5">
+                <div>
+                    <label for="admin-auth-email" class="block text-xs uppercase tracking-wider text-gold-300 font-semibold mb-1">Organizer Email</label>
+                    <input 
+                        type="email" 
+                        id="admin-auth-email" 
+                        value="coutureandcocktailsng@gmail.com"
+                        required 
+                        placeholder="coutureandcocktailsng@gmail.com"
+                        class="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/20 text-cream-50 text-base sm:text-sm focus:outline-none focus:border-gold-400"
+                    >
+                </div>
+                <div>
+                    <label for="admin-auth-password" class="block text-xs uppercase tracking-wider text-gold-300 font-semibold mb-1">Admin Password</label>
+                    <input 
+                        type="password" 
+                        id="admin-auth-password" 
+                        required 
+                        placeholder="••••••••" 
+                        class="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/20 text-cream-50 text-base sm:text-sm focus:outline-none focus:border-gold-400"
+                    >
+                </div>
+                <div class="flex gap-2.5 pt-2">
+                    <button type="button" onclick="app.closeAdminPinModal()" class="w-1/3 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-cream-200 font-semibold text-xs sm:text-sm btn-press">Cancel</button>
+                    <button type="submit" id="admin-signin-btn" class="w-2/3 py-3 rounded-xl gold-foil-bg text-crimson-950 font-extrabold text-xs sm:text-sm btn-press flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-lock-open"></i>
+                        <span>Authenticate Studio</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Quick PIN Access Toggle (For Offline / Preview) -->
+            <div class="pt-2 border-t border-white/10 text-center">
+                <button type="button" onclick="app.togglePinUnlockForm()" class="text-xs text-gold-300/80 hover:text-gold-300 underline font-semibold">
+                    Or unlock with Security PIN (Offline / View Only)
+                </button>
+            </div>
+
+            <!-- Secondary Form: Security PIN fallback -->
+            <form onsubmit="app.verifyAdminPin(event)" id="admin-pin-auth-form" class="hidden space-y-3 pt-2">
+                <label for="admin-pin-input" class="block text-xs uppercase tracking-wider text-cream-200/70 font-semibold text-center">4-Digit Security PIN</label>
+                <input 
+                    type="password" 
+                    id="admin-pin-input" 
+                    placeholder="••••" 
+                    class="w-full px-4 py-3 rounded-xl bg-black/70 border border-gold-400/40 text-center text-xl tracking-[0.5em] text-gold-300 font-bold focus:outline-none focus:border-gold-400"
+                >
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-cream-100 font-bold text-xs btn-press">
+                    Unlock with PIN
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- MODAL 4: MANUAL / OFFLINE SALE LOGGER (FOR ADMIN)          -->
+    <!-- ========================================================== -->
+    <div id="manual-sale-modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md">
+        <div class="w-full sm:max-w-md rounded-t-[32px] sm:rounded-3xl bg-neutral-900 border-t sm:border border-gold-400/40 p-5 sm:p-6 space-y-4 shadow-2xl pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
+            <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto -mt-2 mb-2 sm:hidden shrink-0"></div>
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 class="font-bold text-base sm:text-lg text-cream-50 flex items-center gap-2">
+                    <i class="fa-solid fa-cash-register text-gold-400"></i>
+                    <span>Issue Offline / Bank Transfer Ticket</span>
+                </h3>
+                <button onclick="document.getElementById('manual-sale-modal').classList.add('hidden')" class="text-cream-200/60 hover:text-white btn-press">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="app.handleManualSaleSubmit(event)" class="space-y-3.5">
+                <div>
+                    <label for="ms-name" class="block text-xs uppercase text-cream-200/70 mb-1">Buyer Full Name *</label>
+                    <input type="text" id="ms-name" required placeholder="Enter guest full name" class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/15 text-sm text-cream-50">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="ms-email" class="block text-xs uppercase text-cream-200/70 mb-1">Email *</label>
+                        <input type="email" id="ms-email" required placeholder="vip@guest.com" class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/15 text-sm text-cream-50">
+                    </div>
+                    <div>
+                        <label for="ms-phone" class="block text-xs uppercase text-cream-200/70 mb-1">Phone *</label>
+                        <input type="tel" id="ms-phone" required placeholder="080..." class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/15 text-sm text-cream-50">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="col-span-2">
+                        <label for="ms-tier" class="block text-xs uppercase text-cream-200/70 mb-1">Ticket Tier</label>
+                        <select id="ms-tier" class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/15 text-sm text-cream-50"></select>
+                    </div>
+                    <div>
+                        <label for="ms-qty" class="block text-xs uppercase text-cream-200/70 mb-1">Quantity</label>
+                        <input type="number" id="ms-qty" value="1" min="1" max="20" required class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/15 text-sm text-cream-50">
+                    </div>
+                </div>
+                <div class="pt-2 flex gap-2.5">
+                    <button type="button" onclick="document.getElementById('manual-sale-modal').classList.add('hidden')" class="w-1/2 py-3 rounded-xl bg-white/10 text-cream-200 text-xs font-bold">Cancel</button>
+                    <button type="submit" class="w-1/2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold">Generate Ticket</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- FOOTER                                                     -->
+    <!-- ========================================================== -->
+    <footer class="border-t border-gold-400/20 bg-black/60 py-10 text-center text-xs text-cream-200/60 no-print">
+        <div class="max-w-7xl mx-auto px-4 space-y-3">
+            <div class="flex items-center justify-center gap-2">
+                <span class="font-serif font-bold text-lg text-cream-50">COUTURE &</span>
+                <span class="font-script text-2xl text-gold-400">Cocktails</span>
+            </div>
+            <p id="footer-organizers" class="uppercase tracking-[0.2em] text-gold-300/80 font-semibold">
+                YAMEN PROJETTI CONCEPT X CUSTOM KRAFT
+            </p>
+            <p>© 2026 Couture & Cocktails Benin City. All Rights Reserved.</p>
+            <div class="pt-2">
+                <a href="#admin" class="text-cream-200/20 hover:text-gold-400 text-[11px] transition-colors inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-lock text-[9px]"></i>
+                    <span>Organizer Portal</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none no-print"></div>
+
+    <!-- Hidden Canvas for Generating Downloadable High-Res PNG Tickets -->
+    <canvas id="ticket-export-canvas" width="1200" height="560" class="hidden"></canvas>
+
+    <!-- ========================================================== -->
+    <!-- APPLICATION LOGIC + FIREBASE FIRESTORE REAL-TIME BACKEND   -->
+    <!-- ========================================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-analytics.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+        import { 
+            initializeFirestore,
+            getFirestore, 
+            doc, 
+            getDoc, 
+            setDoc, 
+            deleteDoc,
+            onSnapshot, 
+            collection, 
+            getDocs, 
+            query, 
+            where 
+        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+        // Official Firebase Configuration for Couture & Cocktails
+        const firebaseConfig = {
+            apiKey: "AIzaSyD1VJrZ-sU18aLXgXjt2Rf6dadMc6X-mek",
+            authDomain: "coutureand-cocktails.firebaseapp.com",
+            projectId: "coutureand-cocktails",
+            storageBucket: "coutureand-cocktails.firebasestorage.app",
+            messagingSenderId: "317933737860",
+            appId: "1:317933737860:web:eb9d37f6f1f77e37822fd1",
+            measurementId: "G-KP00S7754Y"
+        };
+
+        // Clean Initial State: Real flyer copy, zero sample sales, zero demo transactions
+        const DEFAULT_STATE = {
+            cms: {
+                titleMain: "COUTURE",
+                titleScript: "Cocktails",
+                organizers: "YAMEN PROJETTI CONCEPT X CUSTOM KRAFT",
+                tagline: "AN EVENING OF ELEGANCE, FASHION & FINE HUMOUR",
+                description: "Experience Benin City's most anticipated luxury soirée. Join industry tastemakers, couture connoisseurs, and comedic royalty for an unforgettable red-carpet night of high fashion, signature cocktails, and electric vibes.",
+                dateText: "DEC 28TH, 2026.",
+                timeText: "Red Carpet: 5:00 PM Prompt",
+                locationText: "BENIN CITY, EDO STATE.",
+                venueText: "The Royal Event Marquee, GRA, Benin City",
+                vibePill: "FASHION • COCKTAILS • GOOD VIBES",
+                announcement: "", // Can be published live via Admin CMS if needed
+                dressCode: "High Couture, Black Tie, or Luxury Traditional Elegance. Strictly no streetwear.",
+                contactInfo: "+234 803 000 2026 • bookings@couturecocktails.ng",
+                countdownIso: "2026-12-28T17:00",
+                paystackPublicKey: "", // Configured in Admin Studio or synced from Firestore
+                serviceFee: 0, // Configurable checkout/service fee in Naira
+                adminPin: "2026"
+            },
+            tiers: [
+                {
+                    id: "tier-regular",
+                    name: "REGULAR",
+                    price: 5000,
+                    guestsPerTicket: 1,
+                    totalStock: 200,
+                    soldCount: 0,
+                    icon: "fa-user",
+                    theme: "cream",
+                    perks: "Standard Red Carpet Entry for 1 Guest • Welcome Cocktail Shot • Main Auditorium Seating",
+                    soldOutOverride: false
+                },
+                {
+                    id: "tier-vip",
+                    name: "VIP FOR 2",
+                    price: 20000,
+                    guestsPerTicket: 2,
+                    totalStock: 60,
+                    soldCount: 0,
+                    icon: "fa-crown",
+                    theme: "gold",
+                    perks: "Priority Fast-Track Entry for 2 Guests • Reserved VIP Lounge Seating • 2 Signature Cocktails",
+                    soldOutOverride: false
+                },
+                {
+                    id: "tier-vvip",
+                    name: "VVIP FOR 5",
+                    price: 100000,
+                    guestsPerTicket: 5,
+                    totalStock: 25,
+                    soldCount: 0,
+                    icon: "fa-gem",
+                    theme: "cream",
+                    perks: "Luxury VVIP Pod for 5 Guests • Complimentary Cocktail Pitcher & Finger Foods • Runway Proximity",
+                    soldOutOverride: false
+                },
+                {
+                    id: "tier-platinum",
+                    name: "PLATINUM TABLE FOR 10",
+                    price: 200000,
+                    guestsPerTicket: 10,
+                    totalStock: 12,
+                    soldCount: 0,
+                    icon: "fa-star",
+                    theme: "gold",
+                    perks: "Front-Row Executive Table for 10 Guests • Premium Bottle Service • Dedicated Hostess & Security",
+                    soldOutOverride: false
+                },
+                {
+                    id: "tier-diamond",
+                    name: "DIAMOND TABLE FOR 10",
+                    price: 500000,
+                    guestsPerTicket: 10,
+                    totalStock: 6,
+                    soldCount: 0,
+                    icon: "fa-chess-queen",
+                    theme: "cream",
+                    perks: "Ultra-Luxury Stage-Side Royal Table for 10 • Exotic Champagne & Cognac Package • Red Carpet Media Feature",
+                    soldOutOverride: false
+                }
+            ],
+            transactions: []
+        };
+
+        // Reactive Single-Page Application Controller
+        const app = {
+            state: JSON.parse(JSON.stringify(DEFAULT_STATE)),
+            currentView: 'public', // 'public' | 'admin'
+            adminUnlocked: false,
+            activeAdminTab: 'analytics', // 'analytics' | 'inventory' | 'cms'
+            checkoutTierId: 'tier-vip',
+            checkoutQty: 1,
+            activeTicketPass: null,
+            fbApp: null,
+            analytics: null,
+            db: null,
+            auth: null,
+            user: null,
+
+            async init() {
+                // Render initial interface structure immediately
+                this.renderAll();
+                this.startCountdownTimer();
+                this.initRoutingAndShortcuts();
+
+                // Connect directly to Firebase Firestore live database (strictly database-only, no local storage)
+                await this.initFirebase();
+            },
+
+            getAdminPin() {
+                return this.state.cms?.adminPin || '2026';
+            },
+
+            initRoutingAndShortcuts() {
+                // Route to separate Admin Studio via URL hash #admin or query ?admin
+                window.addEventListener('hashchange', () => this.handleHashRoute());
+                this.handleHashRoute();
+
+                // Discrete keyboard shortcut for organizers (Ctrl + Alt + A)
+                window.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.altKey && (e.key === 'a' || e.key === 'A')) {
+                        e.preventDefault();
+                        this.toggleAdminAccess();
+                    }
+                });
+            },
+
+            handleHashRoute() {
+                if (window.location.hash === '#admin' || window.location.search.includes('admin=true')) {
+                    if (this.adminUnlocked) {
+                        this.setView('admin');
+                    } else {
+                        this.openAdminPinModal();
+                    }
+                } else if (this.currentView === 'admin') {
+                    this.setView('public');
+                }
+            },
+
+            async initFirebase() {
+                try {
+                    this.fbApp = initializeApp(firebaseConfig);
+                    try {
+                        this.analytics = getAnalytics(this.fbApp);
+                    } catch (e) {}
+
+                    // Use long-polling for universal browser and network compatibility
+                    try {
+                        this.db = initializeFirestore(this.fbApp, {
+                            experimentalForceLongPolling: true
+                        });
+                    } catch (dbInitErr) {
+                        this.db = getFirestore(this.fbApp);
+                    }
+
+                    this.auth = getAuth(this.fbApp);
+
+                    // Real-time Authentication State Tracker
+                    onAuthStateChanged(this.auth, (user) => {
+                        this.user = user;
+                        if (user && !user.isAnonymous && user.email) {
+                            this.adminUser = user;
+                            this.adminUnlocked = true;
+                            const emailEl = document.getElementById('admin-user-email');
+                            if (emailEl) emailEl.textContent = user.email;
+                        }
+                    });
+
+                    // Sign in anonymously if not already authenticated
+                    if (!this.auth.currentUser) {
+                        try {
+                            await signInAnonymously(this.auth);
+                            this.user = this.auth.currentUser;
+                        } catch (authErr) {}
+                    }
+
+                    this.updateSyncBadge('Connecting to Database...', false);
+
+                    // Public event document reference (database only)
+                    const publicDocRef = doc(this.db, 'events_public', 'couture_and_cocktails');
+
+                    // Real-time synchronization listener directly from Firestore for event CMS and tiers
+                    onSnapshot(publicDocRef, (snapshot) => {
+                        if (snapshot.exists()) {
+                            const cloudData = snapshot.data();
+                            if (cloudData) {
+                                if (cloudData.cms) {
+                                    this.state.cms = { ...this.state.cms, ...cloudData.cms };
+                                }
+                                if (Array.isArray(cloudData.tiers) && cloudData.tiers.length > 0) {
+                                    this.state.tiers = cloudData.tiers;
+                                }
+                                this.renderAll();
+                                this.updateSyncBadge('Database Connected Live', true);
+                            }
+                        } else {
+                            // Seed document into Firestore so the database is populated live
+                            this.seedInitialDatabase();
+                        }
+                    }, (err) => {
+                        console.warn("Firestore live stream notice:", err.message || err);
+                        this.updateSyncBadge('Database Error: ' + (err.code || 'Check Rules'), false);
+                    });
+
+                    // Real-time synchronization listener for all tickets (Live Transaction Log & Gate Check-In Registry)
+                    try {
+                        const ticketsCol = collection(this.db, 'tickets');
+                        onSnapshot(ticketsCol, (snapshot) => {
+                            if (snapshot && !snapshot.empty) {
+                                this.state.transactions = snapshot.docs
+                                    .map(d => d.data())
+                                    .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+                            }
+                            if (this.currentView === 'admin') {
+                                this.renderAdminTransactions();
+                                this.renderAdminKPIsAndCharts();
+                            }
+                        }, (err) => {
+                            console.info("Tickets live stream notice:", err.message || err);
+                        });
+                    } catch (e) {
+                        console.info("Tickets listener error:", e);
+                    }
+                } catch (err) {
+                    console.warn("Firebase initialization error:", err.message || err);
+                    this.updateSyncBadge('Database Offline', false);
+                }
+            },
+
+            async seedInitialDatabase() {
+                if (!this.db) return;
+                try {
+                    const publicCms = { ...this.state.cms };
+                    delete publicCms.adminPin;
+                    const publicDocRef = doc(this.db, 'events_public', 'couture_and_cocktails');
+                    await setDoc(publicDocRef, {
+                        cms: publicCms,
+                        tiers: this.state.tiers,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+                    this.updateSyncBadge('Database Connected Live', true);
+                } catch (e) {
+                    this.updateSyncBadge('Live Database Ready', true);
+                }
+            },
+
+            async persistStateToCloud() {
+                this.renderAll();
+                if (!this.db) return;
+
+                const publicCms = { ...this.state.cms };
+                delete publicCms.adminPin;
+
+                try {
+                    const publicDocRef = doc(this.db, 'events_public', 'couture_and_cocktails');
+                    await setDoc(publicDocRef, {
+                        cms: publicCms,
+                        tiers: this.state.tiers,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+
+                    if (this.adminUnlocked) {
+                        const adminDocRef = doc(this.db, 'events_admin', 'couture_and_cocktails');
+                        await setDoc(adminDocRef, {
+                            transactions: this.state.transactions,
+                            updatedAt: new Date().toISOString()
+                        }, { merge: true }).catch(() => {});
+                    }
+
+                    this.updateSyncBadge('Database Connected Live', true);
+                } catch (e) {
+                    console.warn("Cloud save note:", e.message || e);
+                    this.updateSyncBadge('Database Save Notice', false);
+                }
+            },
+
+            updateSyncBadge(text, isLive) {
+                // Status badge removed per design requirement
+            },
+
+            formatNaira(amount) {
+                return '₦' + Number(amount || 0).toLocaleString('en-NG');
+            },
+
+            escapeHtml(str) {
+                if (str === null || str === undefined) return '';
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            },
+
+            // ==========================================
+            // MASTER REACTIVE RENDERER
+            // ==========================================
+            renderAll() {
+                this.renderPublicBranding();
+                this.renderFlyerTicketStack();
+                this.renderDetailedTicketCards();
+                this.renderLookupHint();
+                if (this.currentView === 'admin') {
+                    this.renderAdminDashboard();
+                }
+            },
+
+            renderPublicBranding() {
+                const c = this.state.cms;
+                const setTxt = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = val;
+                };
+
+                const annBar = document.getElementById('announcement-bar');
+                if (annBar) {
+                    if (c.announcement && c.announcement.trim()) {
+                        annBar.textContent = c.announcement;
+                        annBar.classList.remove('hidden');
+                    } else {
+                        annBar.textContent = '';
+                        annBar.classList.add('hidden');
+                    }
+                }
+                setTxt('nav-title-serif', c.titleMain + ' &');
+                setTxt('nav-title-script', c.titleScript);
+                setTxt('nav-organizers', c.organizers);
+
+                setTxt('hero-organizers', c.organizers);
+                setTxt('hero-title-main', c.titleMain);
+                setTxt('hero-title-script', c.titleScript);
+                setTxt('hero-tagline', c.tagline);
+                setTxt('hero-description', c.description);
+                setTxt('hero-date-display', c.dateText);
+                setTxt('hero-time-display', c.timeText);
+                setTxt('hero-location-display', c.locationText);
+                setTxt('hero-venue-display', c.venueText);
+
+                setTxt('flyer-organizers', c.organizers);
+                setTxt('flyer-tagline', c.tagline);
+                setTxt('flyer-date', c.dateText);
+                setTxt('flyer-location', c.locationText);
+                setTxt('flyer-vibe-pill', c.vibePill);
+
+                setTxt('info-dresscode', c.dressCode);
+                setTxt('info-contact', c.contactInfo);
+                setTxt('footer-organizers', c.organizers);
+            },
+
+            // Renders the 5 iconic stacked perforated tickets on the interactive Flyer
+            renderFlyerTicketStack() {
+                const container = document.getElementById('flyer-ticket-stack');
+                if (!container) return;
+
+                container.innerHTML = this.state.tiers.map((tier, idx) => {
+                    const remaining = Math.max(0, tier.totalStock - tier.soldCount);
+                    const isSoldOut = tier.soldOutOverride || remaining <= 0;
+                    const leftBg = tier.theme === 'gold' ? 'gold-foil-bg' : 'cream-ticket-bg';
+                    const tiltClass = idx % 2 === 0 ? '-rotate-[0.6deg]' : 'rotate-[0.6deg]';
+
+                    return `
+                        <div onclick="${isSoldOut ? `app.showToast('This tier is currently Sold Out', 'error')` : `app.openCheckoutModal('${tier.id}')`}" 
+                             class="flyer-ticket-row ticket-perforated ${tiltClass} cursor-pointer rounded-xl overflow-hidden grid grid-cols-12 items-stretch border border-crimson-900/20 select-none btn-press">
+                            
+                            <!-- Left Stub (Cream or Gold Foil matching Flyer) -->
+                            <div class="col-span-7 ${leftBg} px-3 sm:px-4 py-2.5 sm:py-3.5 flex items-center gap-2 sm:gap-3 text-crimson-950 border-r-2 border-dashed border-crimson-900/30 min-w-0">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-crimson-900/10 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid ${tier.icon} text-base sm:text-xl text-crimson-900"></i>
+                                </div>
+                                <div class="leading-tight text-left min-w-0 flex-1">
+                                    <div class="font-extrabold text-xs sm:text-sm tracking-wide uppercase text-crimson-950 truncate">${tier.name}</div>
+                                    <div class="text-[9px] sm:text-[10px] font-bold text-crimson-800/80 truncate">
+                                        ${isSoldOut ? '<span class="text-red-700 font-extrabold">SOLD OUT</span>' : `Admits ${tier.guestsPerTicket} ${tier.guestsPerTicket > 1 ? 'Guests' : 'Guest'}`}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Stub (Deep Crimson with Bold Naira Price) -->
+                            <div class="col-span-5 bg-gradient-to-r from-crimson-800 to-crimson-900 px-2 sm:px-3 py-2.5 sm:py-3.5 flex items-center justify-center">
+                                <span class="font-extrabold text-sm sm:text-xl text-cream-50 italic tracking-tight whitespace-nowrap">
+                                    ${this.formatNaira(tier.price)}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            // Renders the Detailed Box Office Cards with luxury styling
+            renderDetailedTicketCards() {
+                const grid = document.getElementById('detailed-tickets-grid');
+                if (!grid) return;
+
+                grid.innerHTML = this.state.tiers.map((tier) => {
+                    const remaining = Math.max(0, tier.totalStock - tier.soldCount);
+                    const isSoldOut = tier.soldOutOverride || remaining <= 0;
+                    const isGold = tier.theme === 'gold';
+
+                    return `
+                        <div class="rounded-3xl bg-gradient-to-b from-crimson-900/85 to-crimson-950 border ${isGold ? 'border-gold-400/60 shadow-[0_0_30px_rgba(212,175,55,0.12)]' : 'border-gold-400/25'} p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden group hover:border-gold-400 transition-all">
+                            
+                            <div>
+                                <!-- Top Badge & Icon -->
+                                <div class="flex items-center justify-between gap-2 mb-4">
+                                    <div class="w-12 h-12 rounded-2xl ${isGold ? 'gold-foil-bg text-crimson-950' : 'bg-gold-400/15 text-gold-400 border border-gold-400/30'} flex items-center justify-center text-xl shadow-md">
+                                        <i class="fa-solid ${tier.icon}"></i>
+                                    </div>
+                                    ${isSoldOut 
+                                        ? `<span class="px-3 py-1 rounded-full bg-red-600/30 border border-red-400 text-red-200 text-xs font-extrabold uppercase tracking-wider">Sold Out</span>`
+                                        : `<span class="px-3 py-1 rounded-full bg-gold-400/15 border border-gold-400/30 text-gold-300 text-xs font-bold uppercase tracking-wider">
+                                            Official Pass
+                                           </span>`
+                                    }
+                                </div>
+
+                                <!-- Tier Title & Price -->
+                                <h3 class="font-extrabold text-lg sm:text-xl text-cream-50 tracking-wide uppercase">${tier.name}</h3>
+                                <div class="flex items-baseline gap-2 mt-1 mb-4 flex-wrap">
+                                    <span class="text-2xl sm:text-4xl font-extrabold gold-gradient-text">${this.formatNaira(tier.price)}</span>
+                                    <span class="text-xs text-gold-200/75 font-semibold">/ Admits ${tier.guestsPerTicket} ${tier.guestsPerTicket > 1 ? 'Guests' : 'Guest'}</span>
+                                </div>
+
+                                <!-- Perks Description -->
+                                <p class="text-xs sm:text-sm text-cream-100/80 leading-relaxed border-t border-gold-400/20 pt-4">
+                                    ${tier.perks}
+                                </p>
+                            </div>
+
+                            <div class="pt-6">
+                                <!-- Action Button -->
+                                <button 
+                                    onclick="${isSoldOut ? '' : `app.openCheckoutModal('${tier.id}')`}" 
+                                    ${isSoldOut ? 'disabled' : ''}
+                                    class="w-full py-3.5 rounded-xl font-extrabold text-sm btn-press flex items-center justify-center gap-2 ${
+                                        isSoldOut 
+                                        ? 'bg-white/5 text-cream-200/30 cursor-not-allowed border border-white/10' 
+                                        : (isGold ? 'gold-foil-bg text-crimson-950 hover:brightness-110 shadow-lg' : 'bg-crimson-800 hover:bg-gold-400 text-cream-50 hover:text-crimson-950 border border-gold-400/40')
+                                    }">
+                                    <i class="fa-solid ${isSoldOut ? 'fa-ban' : 'fa-ticket'}"></i>
+                                    <span>${isSoldOut ? 'UNAVAILABLE / SOLD OUT' : `BUY ${tier.name}`}</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            renderLookupHint() {
+                const hintEl = document.getElementById('lookup-sample-hint');
+                if (hintEl) hintEl.innerHTML = '';
+            },
+
+            quickLookup(ticketId) {
+                const input = document.getElementById('ticket-lookup-input');
+                if (input) {
+                    input.value = ticketId;
+                    this.lookupTicketByQuery(ticketId);
+                }
+            },
+
+            // ==========================================
+            // CHECKOUT & PAYSTACK PAYMENT INTEGRATION
+            // ==========================================
+            openCheckoutModal(tierId) {
+                const tier = this.state.tiers.find(t => t.id === tierId) || this.state.tiers[0];
+                this.checkoutTierId = tier.id;
+                this.checkoutQty = 1;
+
+                // Populate dropdown
+                const select = document.getElementById('co-tier-select');
+                select.innerHTML = this.state.tiers.map(t => {
+                    const rem = Math.max(0, t.totalStock - t.soldCount);
+                    const disabled = t.soldOutOverride || rem <= 0;
+                    return `<option value="${t.id}" ${t.id === tier.id ? 'selected' : ''} ${disabled ? 'disabled' : ''}>
+                        ${t.name} — ${this.formatNaira(t.price)} ${disabled ? '(SOLD OUT)' : ''}
+                    </option>`;
+                }).join('');
+
+                this.updateCheckoutSummaryUI();
+
+                const modal = document.getElementById('checkout-modal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            },
+
+            closeCheckoutModal() {
+                const modal = document.getElementById('checkout-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            },
+
+            onCheckoutTierChange(newTierId) {
+                this.checkoutTierId = newTierId;
+                this.checkoutQty = 1;
+                this.updateCheckoutSummaryUI();
+            },
+
+            adjustCheckoutQty(delta) {
+                const tier = this.state.tiers.find(t => t.id === this.checkoutTierId);
+                if (!tier) return;
+                const remaining = Math.max(1, tier.totalStock - tier.soldCount);
+                const next = this.checkoutQty + delta;
+                if (next >= 1 && next <= Math.min(10, remaining)) {
+                    this.checkoutQty = next;
+                    this.updateCheckoutSummaryUI();
+                }
+            },
+
+            updateCheckoutSummaryUI() {
+                const tier = this.state.tiers.find(t => t.id === this.checkoutTierId);
+                if (!tier) return;
+
+                const subtotal = tier.price * this.checkoutQty;
+                const serviceFee = Number(this.state.cms.serviceFee || 0);
+                const totalAmount = subtotal + serviceFee;
+
+                document.getElementById('co-tier-name').textContent = tier.name;
+                document.getElementById('co-tier-guests').textContent = `Admits ${tier.guestsPerTicket} ${tier.guestsPerTicket > 1 ? 'Guests' : 'Guest'} per ticket`;
+                document.getElementById('co-tier-price').textContent = this.formatNaira(tier.price);
+                document.getElementById('co-qty').value = this.checkoutQty;
+
+                const totalGuests = tier.guestsPerTicket * this.checkoutQty;
+                document.getElementById('co-summary-guests').textContent = `${totalGuests} ${totalGuests > 1 ? 'Guests' : 'Guest'}`;
+
+                const feeRow = document.getElementById('co-fee-row');
+                if (feeRow) {
+                    if (serviceFee > 0) {
+                        feeRow.classList.remove('hidden');
+                        document.getElementById('co-summary-subtotal').textContent = this.formatNaira(subtotal);
+                        document.getElementById('co-summary-fee').textContent = this.formatNaira(serviceFee);
+                    } else {
+                        feeRow.classList.add('hidden');
+                    }
+                }
+
+                document.getElementById('co-summary-total').textContent = this.formatNaira(totalAmount);
+            },
+
+            // Official Paystack Inline Checkout Trigger
+            initiatePaystackPayment(e) {
+                e.preventDefault();
+                const buyerName = document.getElementById('co-buyer-name').value.trim();
+                const buyerEmail = document.getElementById('co-buyer-email').value.trim();
+                const buyerPhone = document.getElementById('co-buyer-phone').value.trim();
+
+                if (!buyerName || !buyerEmail || !buyerPhone) {
+                    this.showToast("Please complete your Name, Email, and Phone number.", "error");
+                    return;
+                }
+
+                const tier = this.state.tiers.find(t => t.id === this.checkoutTierId);
+                if (!tier) return;
+
+                const remaining = tier.totalStock - tier.soldCount;
+                if (tier.soldOutOverride || remaining < this.checkoutQty) {
+                    this.showToast(`Only ${remaining} left for ${tier.name}.`, "error");
+                    return;
+                }
+
+                const subtotal = tier.price * this.checkoutQty;
+                const serviceFee = Number(this.state.cms.serviceFee || 0);
+                const totalAmountNaira = subtotal + serviceFee;
+                const paystackKey = (this.state.cms.paystackPublicKey || '').trim();
+
+                // If organizer has entered their live or test Paystack Public Key, invoke PaystackPop
+                if (paystackKey && paystackKey.startsWith('pk_') && window.PaystackPop) {
+                    const ref = 'PSK-CC-' + Math.floor(100000 + Math.random() * 900000);
+                    const handler = window.PaystackPop.setup({
+                        key: paystackKey,
+                        email: buyerEmail,
+                        amount: totalAmountNaira * 100, // Paystack expects amount in Kobo
+                        currency: 'NGN',
+                        ref: ref,
+                        metadata: {
+                            custom_fields: [
+                                { display_name: "Buyer Name", variable_name: "buyer_name", value: buyerName },
+                                { display_name: "Phone", variable_name: "phone", value: buyerPhone },
+                                { display_name: "Ticket Tier", variable_name: "tier", value: tier.name },
+                                { display_name: "Quantity", variable_name: "qty", value: this.checkoutQty }
+                            ]
+                        },
+                        callback: (response) => {
+                            this.finalizeTicketPurchase({
+                                buyerName,
+                                buyerEmail,
+                                buyerPhone,
+                                tier,
+                                quantity: this.checkoutQty,
+                                reference: response.reference || ref,
+                                paymentMethod: "Paystack Live"
+                            });
+                        },
+                        onClose: () => {
+                            this.showToast("Paystack payment window closed.", "info");
+                        }
+                    });
+                    handler.openIframe();
+                } else {
+                    // Direct / Test Reservation Fallback for testing and direct booking
+                    const contact = this.state.cms.contactInfo || "+234 803 000 2026";
+                    const isConfirmed = confirm(
+                        "ONLINE CHECKOUT NOTICE:\n\n" +
+                        "No Paystack Public Key is configured yet in Admin Studio.\n\n" +
+                        "Would you like to complete this as a Direct / Test Reservation now?\n\n" +
+                        "(Click OK to issue ticket pass, or Cancel to reach box office: " + contact + ")"
+                    );
+                    if (isConfirmed) {
+                        this.showToast("Confirming your ticket reservation...", "info");
+                        const ref = 'CC-RES-' + Math.floor(100000 + Math.random() * 900000);
+                        this.finalizeTicketPurchase({
+                            buyerName,
+                            buyerEmail,
+                            buyerPhone,
+                            tier,
+                            quantity: this.checkoutQty,
+                            reference: ref,
+                            paymentMethod: "Direct Reservation"
+                        });
+                    }
+                }
+            },
+
+            async finalizeTicketPurchase({ buyerName, buyerEmail, buyerPhone, tier, quantity, reference, paymentMethod }) {
+                // Generate Unique Ticket ID: CC-2026-XXXX
+                const nextNum = 1001 + this.state.transactions.length;
+                const randomSuffix = Math.floor(10 + Math.random() * 89);
+                const ticketId = `CC-2026-${nextNum}${randomSuffix}`;
+
+                // Deduct inventory
+                tier.soldCount = Number(tier.soldCount || 0) + Number(quantity);
+
+                const serviceFee = Number(this.state.cms.serviceFee || 0);
+                const amountPaid = (Number(tier.price) * Number(quantity)) + serviceFee;
+
+                const newTx = {
+                    ticketId,
+                    reference,
+                    buyerName,
+                    buyerEmail,
+                    buyerPhone,
+                    tierId: tier.id,
+                    tierName: tier.name + (quantity > 1 ? ` (x${quantity})` : ''),
+                    quantity: Number(quantity),
+                    guestsAdmitted: Number(tier.guestsPerTicket) * Number(quantity),
+                    amountPaid: amountPaid,
+                    serviceFee: serviceFee,
+                    timestamp: new Date().toISOString(),
+                    checkedIn: false,
+                    paymentMethod
+                };
+
+                // Prepend to transaction log in memory
+                this.state.transactions.unshift(newTx);
+                this.renderAll();
+
+                // Instantly close checkout modal and display the official Digital Pass
+                this.closeCheckoutModal();
+                this.openTicketPassModal(newTx);
+                this.showToast(`Ticket ${ticketId} confirmed & issued!`, "success");
+
+                // Sync directly to Cloud database (Database only)
+                await this.syncTransactionToCloud(newTx, ticketId);
+            },
+
+            async syncTransactionToCloud(newTx, ticketId) {
+                if (!this.db) return;
+                try {
+                    const ticketDocRef = doc(this.db, 'tickets', ticketId);
+                    await setDoc(ticketDocRef, newTx);
+                } catch (e) {
+                    console.warn("Ticket cloud sync error:", e.message || e);
+                }
+
+                // Update live inventory counts in Firestore
+                try {
+                    await this.persistStateToCloud();
+                } catch (e) {}
+            },
+
+            // ==========================================
+            // DIGITAL TICKET PASS & PNG CANVAS GENERATOR
+            // ==========================================
+            openTicketPassModal(tx) {
+                this.activeTicketPass = tx;
+                const c = this.state.cms;
+
+                document.getElementById('pass-organizers').textContent = c.organizers;
+                document.getElementById('pass-tier-name').textContent = tx.tierName;
+                document.getElementById('pass-guest-count').textContent = `Admits ${tx.guestsAdmitted} ${tx.guestsAdmitted > 1 ? 'Guests' : 'Guest'}`;
+                document.getElementById('pass-amount').textContent = this.formatNaira(tx.amountPaid);
+                document.getElementById('pass-buyer-name').textContent = tx.buyerName;
+                document.getElementById('pass-buyer-contact').textContent = `${tx.buyerPhone} • ${tx.buyerEmail}`;
+                document.getElementById('pass-date').textContent = c.dateText;
+                document.getElementById('pass-venue').textContent = `${c.venueText}, ${c.locationText}`;
+                document.getElementById('pass-ref').textContent = tx.reference;
+                document.getElementById('pass-ticket-id').textContent = tx.ticketId;
+
+                const checkinEl = document.getElementById('pass-checkin-state');
+                if (tx.checkedIn) {
+                    checkinEl.textContent = "✓ Checked In at Gate";
+                    checkinEl.className = "font-bold text-emerald-400";
+                } else {
+                    checkinEl.textContent = "Gate Status: Valid for Entry";
+                    checkinEl.className = "font-bold text-gold-300";
+                }
+
+                // Generate Scannable QR Code encoding Ticket ID, Holder, Tier & Ref (Client-Side Standalone)
+                const qrString = `COUTURE&COCKTAILS|ID:${tx.ticketId}|HOLDER:${tx.buyerName}|TIER:${tx.tierName}|GUESTS:${tx.guestsAdmitted}|REF:${tx.reference}`;
+                const qrImg = document.getElementById('pass-qr-img');
+                if (window.QRious) {
+                    const qr = new window.QRious({
+                        value: qrString,
+                        size: 260,
+                        level: 'H',
+                        background: '#ffffff',
+                        foreground: '#000000'
+                    });
+                    qrImg.src = qr.toDataURL();
+                } else {
+                    const qrData = encodeURIComponent(qrString);
+                    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=${qrData}`;
+                }
+
+                const modal = document.getElementById('ticket-pass-modal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            },
+
+            closeTicketPassModal() {
+                const modal = document.getElementById('ticket-pass-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            },
+
+            // Renders a crisp Luxury Digital Ticket PNG directly via HTML5 Canvas so the buyer gets an image file
+            downloadTicketAsPNG() {
+                const tx = this.activeTicketPass;
+                if (!tx) return;
+                const c = this.state.cms;
+                const canvas = document.getElementById('ticket-export-canvas');
+                const ctx = canvas.getContext('2d');
+
+                // Background Velvet Crimson Gradient
+                const grad = ctx.createLinearGradient(0, 0, 1200, 560);
+                grad.addColorStop(0, '#2B0202');
+                grad.addColorStop(0.6, '#4D0505');
+                grad.addColorStop(1, '#1E0101');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 1200, 560);
+
+                // Outer Metallic Gold Border
+                ctx.strokeStyle = '#DFB748';
+                ctx.lineWidth = 6;
+                ctx.strokeRect(18, 18, 1164, 524);
+
+                // Perforated Divider Line at x = 840
+                ctx.setLineDash([12, 10]);
+                ctx.strokeStyle = 'rgba(223, 183, 72, 0.5)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(840, 24);
+                ctx.lineTo(840, 536);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Header Organizers
+                ctx.fillStyle = '#EBD07A';
+                ctx.font = 'bold 15px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(c.organizers.toUpperCase(), 55, 68);
+
+                // Event Title
+                ctx.fillStyle = '#FFFDF9';
+                ctx.font = 'bold 54px "Cormorant Garamond", Georgia, serif';
+                ctx.fillText(`${c.titleMain} & ${c.titleScript}`, 55, 130);
+
+                ctx.fillStyle = '#DFB748';
+                ctx.font = 'bold 14px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(c.tagline, 55, 160);
+
+                // Cream Ticket Tier Box
+                ctx.fillStyle = '#FAF3E6';
+                ctx.fillRect(55, 190, 730, 115);
+                ctx.strokeStyle = '#C99B27';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(55, 190, 730, 115);
+
+                ctx.fillStyle = '#7A0909';
+                ctx.font = 'bold 13px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText('OFFICIAL ADMISSION TIER', 80, 222);
+
+                ctx.fillStyle = '#240202';
+                ctx.font = '800 34px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(tx.tierName.toUpperCase(), 80, 263);
+
+                ctx.fillStyle = '#5A0707';
+                ctx.font = 'bold 16px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(`Admits ${tx.guestsAdmitted} Guest(s)  •  Paid: ${this.formatNaira(tx.amountPaid)}`, 80, 290);
+
+                // Buyer Details & Venue
+                ctx.fillStyle = '#EBD07A';
+                ctx.font = 'bold 13px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText('TICKET HOLDER', 55, 355);
+                ctx.fillText('EVENT DATE & LOCATION', 440, 355);
+
+                ctx.fillStyle = '#FFFDF9';
+                ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(tx.buyerName, 55, 388);
+                ctx.fillText(c.dateText, 440, 388);
+
+                ctx.fillStyle = '#F5E3A9';
+                ctx.font = '16px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(`${tx.buyerPhone} • ${tx.buyerEmail}`, 55, 416);
+                ctx.fillText(`${c.venueText}, ${c.locationText}`, 440, 416);
+
+                // Footer Reference
+                ctx.fillStyle = '#EBD07A';
+                ctx.font = 'bold 15px monospace';
+                ctx.fillText(`Paystack Ref: ${tx.reference}   |   Status: CONFIRMED & PAID`, 55, 495);
+
+                // Right Stub: Ticket ID & Verification Box
+                ctx.fillStyle = '#EBD07A';
+                ctx.font = 'bold 16px "Plus Jakarta Sans", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('UNIQUE TICKET ID', 1010, 95);
+
+                ctx.fillStyle = '#FFFDF9';
+                ctx.font = 'bold 30px monospace';
+                ctx.fillText(tx.ticketId, 1010, 140);
+
+                // Draw Stylized Verification Seal on Stub
+                ctx.fillStyle = '#FAF3E6';
+                ctx.fillRect(900, 180, 220, 220);
+                ctx.fillStyle = '#3B0404';
+                ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText('VIP GATE PASS', 1010, 265);
+                ctx.font = 'bold 24px monospace';
+                ctx.fillStyle = '#7A0909';
+                ctx.fillText(tx.ticketId, 1010, 305);
+                ctx.font = '13px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(`Admits ${tx.guestsAdmitted} Guest(s)`, 1010, 340);
+
+                ctx.fillStyle = '#EBD07A';
+                ctx.font = '14px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText('Present at Entrance Desk', 1010, 445);
+                ctx.textAlign = 'left';
+
+                // Trigger Download
+                const link = document.createElement('a');
+                link.download = `${tx.ticketId}-Couture-And-Cocktails.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                this.showToast("Digital Ticket PNG downloaded!", "success");
+            },
+
+            // ==========================================
+            // TICKET LOOKUP / RETRIEVAL BY GUEST
+            // ==========================================
+            handleTicketLookup(e) {
+                e.preventDefault();
+                const query = document.getElementById('ticket-lookup-input').value.trim();
+                this.lookupTicketByQuery(query);
+            },
+
+            async lookupTicketByQuery(q) {
+                if (!q) return;
+                const raw = q.trim();
+                const needle = raw.toLowerCase();
+                let match = this.state.transactions.find(tx => 
+                    (tx.ticketId && tx.ticketId.toLowerCase() === needle) ||
+                    (tx.reference && tx.reference.toLowerCase() === needle) ||
+                    (tx.buyerEmail && tx.buyerEmail.toLowerCase() === needle) ||
+                    (tx.buyerPhone && tx.buyerPhone.toLowerCase().includes(needle))
+                );
+
+                // If not found in local state, query Firestore database with safe timeout
+                if (!match && this.db) {
+                    try {
+                        const queryPromise = (async () => {
+                            const directSnap = await getDoc(doc(this.db, 'tickets', raw));
+                            if (directSnap.exists()) return directSnap.data();
+
+                            const emailQuery = query(collection(this.db, 'tickets'), where('buyerEmail', '==', raw));
+                            const emailSnap = await getDocs(emailQuery);
+                            if (!emailSnap.empty) return emailSnap.docs[0].data();
+
+                            const refQuery = query(collection(this.db, 'tickets'), where('reference', '==', raw));
+                            const refSnap = await getDocs(refQuery);
+                            if (!refSnap.empty) return refSnap.docs[0].data();
+
+                            return null;
+                        })();
+
+                        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 2500));
+                        match = await Promise.race([queryPromise, timeoutPromise]);
+                    } catch (err) {
+                        console.warn("Firestore lookup notice:", err);
+                    }
+                }
+
+                if (match) {
+                    this.openTicketPassModal(match);
+                    this.showToast(`Ticket ${match.ticketId} retrieved!`, "success");
+                } else {
+                    this.showToast("No ticket found matching that Ticket ID, Email, or Reference.", "error");
+                }
+            },
+
+            // ==========================================
+            // ADMIN STUDIO ACCESS & FULL CONTROL PANEL
+            // ==========================================
+            toggleAdminAccess() {
+                if (this.currentView === 'admin') {
+                    this.setView('public');
+                    return;
+                }
+                if (this.adminUnlocked) {
+                    this.setView('admin');
+                } else {
+                    this.openAdminPinModal();
+                }
+            },
+
+            openAdminPinModal() {
+                const modal = document.getElementById('admin-pin-modal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    const errBox = document.getElementById('admin-auth-error');
+                    if (errBox) errBox.classList.add('hidden');
+                    const passInput = document.getElementById('admin-auth-password');
+                    if (passInput) {
+                        passInput.value = '';
+                        passInput.focus();
+                    }
+                }
+            },
+
+            closeAdminPinModal() {
+                const modal = document.getElementById('admin-pin-modal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+                if (!this.adminUnlocked && window.location.hash === '#admin') {
+                    history.replaceState(null, '', window.location.pathname + window.location.search);
+                }
+            },
+
+            togglePinUnlockForm() {
+                const pinForm = document.getElementById('admin-pin-auth-form');
+                if (pinForm) {
+                    pinForm.classList.toggle('hidden');
+                    const pinInput = document.getElementById('admin-pin-input');
+                    if (pinInput && !pinForm.classList.contains('hidden')) pinInput.focus();
+                }
+            },
+
+            async signInAdminWithEmail(e) {
+                e.preventDefault();
+                const emailInput = document.getElementById('admin-auth-email');
+                const passInput = document.getElementById('admin-auth-password');
+                const errBox = document.getElementById('admin-auth-error');
+                const btn = document.getElementById('admin-signin-btn');
+
+                const email = (emailInput?.value || '').trim();
+                const password = passInput?.value || '';
+
+                if (!email || !password) {
+                    this.showAdminAuthError("Please enter both organizer email and password.");
+                    return;
+                }
+
+                if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
+                if (errBox) errBox.classList.add('hidden');
+
+                try {
+                    const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+                    this.user = userCredential.user;
+                    this.adminUser = userCredential.user;
+                    this.adminUnlocked = true;
+
+                    const emailEl = document.getElementById('admin-user-email');
+                    if (emailEl) emailEl.textContent = this.user.email;
+
+                    this.closeAdminPinModal();
+                    this.setView('admin');
+                    this.showToast(`Authenticated as Admin (${this.user.email})`, "success");
+                } catch (err) {
+                    console.warn("Admin authentication error:", err);
+                    let msg = err.message || "Failed to authenticate.";
+                    if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+                        msg = "Invalid email or password. Please verify the credentials in Firebase Console.";
+                    } else if (err.code === 'auth/configuration-not-found' || err.code === 'auth/operation-not-allowed') {
+                        msg = "Email/Password sign-in is not yet enabled in Firebase Console. (Go to Build > Authentication > Sign-in method > Email/Password). You can use PIN unlock in the meantime.";
+                    }
+                    this.showAdminAuthError(msg);
+                } finally {
+                    if (btn) btn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Authenticate Studio';
+                }
+            },
+
+            showAdminAuthError(msg) {
+                const errBox = document.getElementById('admin-auth-error');
+                if (errBox) {
+                    errBox.textContent = msg;
+                    errBox.classList.remove('hidden');
+                } else {
+                    this.showToast(msg, "error");
+                }
+            },
+
+            async signOutAdmin() {
+                try {
+                    await signOut(this.auth);
+                } catch (e) {}
+                this.adminUnlocked = false;
+                this.adminUser = null;
+                const emailEl = document.getElementById('admin-user-email');
+                if (emailEl) emailEl.textContent = 'PIN Mode';
+                
+                // Re-authenticate anonymously for public visitor usage
+                try {
+                    await signInAnonymously(this.auth);
+                    this.user = this.auth.currentUser;
+                } catch (e) {}
+
+                this.setView('public');
+                this.showToast("Admin session signed out.", "info");
+            },
+
+            verifyAdminPin(e) {
+                e.preventDefault();
+                const entered = document.getElementById('admin-pin-input').value.trim();
+                const validPin = this.getAdminPin();
+                if (entered === validPin) {
+                    this.adminUnlocked = true;
+                    this.closeAdminPinModal();
+                    const emailEl = document.getElementById('admin-user-email');
+                    if (emailEl) emailEl.textContent = 'PIN Unlocked (Offline)';
+                    this.setView('admin');
+                    this.showToast("Welcome to Admin Studio (PIN Mode)", "info");
+                } else {
+                    this.showToast("Invalid Admin PIN.", "error");
+                }
+            },
+
+            setView(viewName) {
+                this.currentView = viewName;
+                const pubView = document.getElementById('public-view');
+                const admView = document.getElementById('admin-view');
+                const btnLabel = document.getElementById('admin-btn-label');
+
+                if (viewName === 'admin') {
+                    pubView.classList.add('hidden');
+                    admView.classList.remove('hidden');
+                    if (btnLabel) btnLabel.textContent = 'Exit Admin';
+                    if (window.location.hash !== '#admin') {
+                        history.replaceState(null, '', '#admin');
+                    }
+                    this.renderAdminDashboard();
+                    this.fetchLiveDatabaseTransactions();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    admView.classList.add('hidden');
+                    pubView.classList.remove('hidden');
+                    if (btnLabel) btnLabel.textContent = 'Admin Studio';
+                    if (window.location.hash === '#admin') {
+                        history.replaceState(null, '', window.location.pathname + window.location.search);
+                    }
+                    this.renderAll();
+                }
+            },
+
+            async fetchLiveDatabaseTransactions() {
+                if (!this.db) return;
+                try {
+                    const ticketsQuery = query(collection(this.db, 'tickets'));
+                    const ticketsSnap = await getDocs(ticketsQuery);
+                    if (ticketsSnap && !ticketsSnap.empty) {
+                        this.state.transactions = ticketsSnap.docs
+                            .map(d => d.data())
+                            .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+                    }
+                    this.renderAdminTransactions();
+                    this.renderAdminKPIsAndCharts();
+                } catch (e) {
+                    console.info("Database transaction lookup note:", e.message || e);
+                    this.renderAdminTransactions();
+                    this.renderAdminKPIsAndCharts();
+                }
+            },
+
+            setAdminTab(tabName) {
+                this.activeAdminTab = tabName;
+                const tabs = ['analytics', 'inventory', 'cms'];
+                tabs.forEach(t => {
+                    const panel = document.getElementById(`admin-panel-${t}`);
+                    const btn = document.getElementById(`adm-tab-${t}`);
+                    if (t === tabName) {
+                        panel.classList.remove('hidden');
+                        btn.className = "px-5 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm transition-all flex items-center gap-2 gold-foil-bg text-crimson-950 shadow-lg";
+                    } else {
+                        panel.classList.add('hidden');
+                        btn.className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 bg-white/5 text-cream-200 hover:bg-white/10";
+                    }
+                });
+                this.renderAdminDashboard();
+            },
+
+            renderAdminDashboard() {
+                this. setAdminTabUIOnly();
+                this.renderAdminKPIsAndCharts();
+                this.renderAdminTransactions();
+                this.renderAdminInventoryManager();
+                this.populateCMSForm();
+            },
+
+            setAdminTabUIOnly() {
+                const tabs = ['analytics', 'inventory', 'cms'];
+                tabs.forEach(t => {
+                    const panel = document.getElementById(`admin-panel-${t}`);
+                    const btn = document.getElementById(`adm-tab-${t}`);
+                    if (t === this.activeAdminTab) {
+                        panel.classList.remove('hidden');
+                        btn.className = "px-5 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm transition-all flex items-center gap-2 gold-foil-bg text-crimson-950 shadow-lg";
+                    } else {
+                        panel.classList.add('hidden');
+                        btn.className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 bg-white/5 text-cream-200 hover:bg-white/10";
+                    }
+                });
+            },
+
+            renderAdminKPIsAndCharts() {
+                const txRevenue = this.state.transactions.reduce((acc, tx) => acc + Number(tx.amountPaid || 0), 0);
+                const tiersRevenue = this.state.tiers.reduce((acc, t) => acc + (Number(t.price || 0) * Number(t.soldCount || 0)), 0);
+                const totalRevenue = Math.max(txRevenue, tiersRevenue);
+
+                const txTicketsCount = this.state.transactions.reduce((acc, tx) => acc + Number(tx.quantity || 1), 0);
+                const tiersTicketsSold = this.state.tiers.reduce((acc, t) => acc + Number(t.soldCount || 0), 0);
+                const totalTicketsSold = Math.max(txTicketsCount, tiersTicketsSold);
+
+                const totalCapacity = this.state.tiers.reduce((acc, t) => acc + Number(t.totalStock || 0), 0);
+                const totalRemaining = Math.max(0, totalCapacity - totalTicketsSold);
+
+                const txGuests = this.state.transactions.reduce((acc, tx) => acc + Number(tx.guestsAdmitted || 0), 0);
+                const tierGuests = this.state.tiers.reduce((acc, t) => acc + (Number(t.guestsPerTicket || 1) * Number(t.soldCount || 0)), 0);
+                const totalGuestsExpected = Math.max(txGuests, tierGuests);
+
+                const checkedInGuests = this.state.transactions
+                    .filter(tx => tx.checkedIn)
+                    .reduce((acc, tx) => acc + Number(tx.guestsAdmitted || 0), 0);
+
+                const sellThroughPct = totalCapacity > 0 ? Math.round((totalTicketsSold / totalCapacity) * 100) : 0;
+
+                const kpiRev = document.getElementById('kpi-revenue');
+                if (kpiRev) kpiRev.textContent = this.formatNaira(totalRevenue);
+                const kpiSold = document.getElementById('kpi-tickets-sold');
+                if (kpiSold) kpiSold.textContent = totalTicketsSold.toLocaleString();
+                const kpiRem = document.getElementById('kpi-tickets-remaining');
+                if (kpiRem) kpiRem.textContent = `${totalRemaining.toLocaleString()} tickets/tables left available`;
+                const kpiGuests = document.getElementById('kpi-total-guests');
+                if (kpiGuests) kpiGuests.textContent = totalGuestsExpected.toLocaleString();
+                const kpiCheck = document.getElementById('kpi-checked-in');
+                if (kpiCheck) kpiCheck.textContent = `${checkedInGuests} guests checked in at gate`;
+                const kpiPct = document.getElementById('kpi-capacity-pct');
+                if (kpiPct) kpiPct.textContent = `${sellThroughPct}%`;
+                const kpiBar = document.getElementById('kpi-capacity-bar');
+                if (kpiBar) kpiBar.style.width = `${Math.min(100, sellThroughPct)}%`;
+
+                // Render Tier Breakdown Bars
+                const barsContainer = document.getElementById('admin-tier-analytics-bars');
+                barsContainer.innerHTML = this.state.tiers.map(tier => {
+                    const rem = Math.max(0, tier.totalStock - tier.soldCount);
+                    const pct = tier.totalStock > 0 ? Math.round((tier.soldCount / tier.totalStock) * 100) : 0;
+                    const tierRev = tier.soldCount * tier.price;
+
+                    return `
+                        <div class="p-4 rounded-xl bg-black/50 border border-white/10 space-y-2">
+                            <div class="flex items-center justify-between text-xs font-bold text-gold-300">
+                                <span class="truncate">${tier.name}</span>
+                                <span>${pct}%</span>
+                            </div>
+                            <div class="text-lg font-extrabold text-cream-50">${this.formatNaira(tierRev)}</div>
+                            <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full gold-foil-bg" style="width: ${Math.min(100, pct)}%"></div>
+                            </div>
+                            <div class="flex justify-between text-[11px] text-cream-200/70">
+                                <span>Sold: <strong>${tier.soldCount}</strong></span>
+                                <span>Left: <strong class="text-emerald-400">${rem}</strong></span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Populate Tier Filter Select
+                const filterSelect = document.getElementById('admin-tx-filter-tier');
+                const currentVal = filterSelect.value || 'ALL';
+                filterSelect.innerHTML = `<option value="ALL">All Ticket Tiers</option>` + 
+                    this.state.tiers.map(t => `<option value="${t.id}" ${t.id === currentVal ? 'selected' : ''}>${t.name}</option>`).join('');
+            },
+
+            renderAdminTransactions() {
+                const tbody = document.getElementById('admin-tx-tbody');
+                if (!tbody) return;
+
+                const searchVal = (document.getElementById('admin-tx-search')?.value || '').toLowerCase();
+                const tierFilter = document.getElementById('admin-tx-filter-tier')?.value || 'ALL';
+
+                const filtered = this.state.transactions.filter(tx => {
+                    const matchesTier = tierFilter === 'ALL' || tx.tierId === tierFilter;
+                    const matchesSearch = !searchVal || 
+                        tx.buyerName.toLowerCase().includes(searchVal) ||
+                        tx.ticketId.toLowerCase().includes(searchVal) ||
+                        tx.reference.toLowerCase().includes(searchVal) ||
+                        tx.buyerEmail.toLowerCase().includes(searchVal) ||
+                        tx.buyerPhone.toLowerCase().includes(searchVal);
+                    return matchesTier && matchesSearch;
+                });
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="py-10 text-center text-cream-200/50">
+                                No transactions match your current filter.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = filtered.map(tx => {
+                    const dateFormatted = new Date(tx.timestamp).toLocaleDateString('en-GB', {
+                        day: '2-digit', month: 'short', year: 'numeric'
+                    });
+                    const safeTicketId = this.escapeHtml(tx.ticketId);
+                    const safeReference = this.escapeHtml(tx.reference);
+                    const safeBuyerName = this.escapeHtml(tx.buyerName);
+                    const safeBuyerPhone = this.escapeHtml(tx.buyerPhone);
+                    const safeBuyerEmail = this.escapeHtml(tx.buyerEmail);
+                    const safeTierName = this.escapeHtml(tx.tierName);
+
+                    return `
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="py-3.5 px-4">
+                                <div class="font-mono font-bold text-gold-300">${safeTicketId}</div>
+                                <div class="text-[11px] font-mono text-cream-200/50">${safeReference}</div>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <div class="font-bold text-cream-50">${safeBuyerName}</div>
+                                <div class="text-[11px] text-cream-200/60">${safeBuyerPhone} • ${safeBuyerEmail}</div>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <span class="px-2.5 py-1 rounded-md bg-crimson-900 border border-gold-400/30 text-gold-200 text-xs font-bold">${safeTierName}</span>
+                                <div class="text-[11px] text-cream-200/60 mt-1">Admits ${Number(tx.guestsAdmitted || 1)} Guest(s)</div>
+                            </td>
+                            <td class="py-3.5 px-4 font-extrabold text-emerald-400">
+                                ${this.formatNaira(tx.amountPaid)}
+                            </td>
+                            <td class="py-3.5 px-4 text-xs text-cream-200/70">
+                                ${dateFormatted}
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <button onclick="app.toggleGateCheckIn('${safeTicketId}')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                    tx.checkedIn 
+                                    ? 'bg-emerald-500/20 border border-emerald-400 text-emerald-300' 
+                                    : 'bg-white/10 hover:bg-gold-400 hover:text-crimson-950 text-cream-100'
+                                }">
+                                    <i class="fa-solid ${tx.checkedIn ? 'fa-check-double' : 'fa-door-open'} mr-1"></i>
+                                    ${tx.checkedIn ? 'Checked In' : 'Check In Guest'}
+                                </button>
+                            </td>
+                            <td class="py-3.5 px-4 text-right space-x-1">
+                                <button onclick="app.lookupTicketByQuery('${safeTicketId}')" class="px-3 py-1.5 rounded-lg bg-gold-400/15 hover:bg-gold-400/30 text-gold-300 text-xs font-bold" title="View Digital Ticket">
+                                    <i class="fa-solid fa-qrcode mr-1"></i>Pass
+                                </button>
+                                <button onclick="app.deleteTransaction('${safeTicketId}')" class="px-2.5 py-1.5 rounded-lg bg-red-950/50 hover:bg-red-800 text-red-300 text-xs" title="Delete Record">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            },
+
+            async toggleGateCheckIn(ticketId) {
+                const tx = this.state.transactions.find(t => t.ticketId === ticketId);
+                if (!tx) return;
+                tx.checkedIn = !tx.checkedIn;
+                this.renderAdminTransactions();
+                this.renderAdminKPIsAndCharts();
+                this.showToast(tx.checkedIn ? `${tx.buyerName} checked in at gate!` : `Check-in reverted for ${tx.ticketId}`, "info");
+
+                // Direct database sync to Firestore
+                if (this.db) {
+                    try {
+                        const ticketDocRef = doc(this.db, 'tickets', ticketId);
+                        await setDoc(ticketDocRef, { checkedIn: tx.checkedIn }, { merge: true });
+                    } catch (err) {
+                        console.warn("Gate checkin cloud sync note:", err.message || err);
+                    }
+                }
+            },
+
+            deleteTransaction(ticketId) {
+                const idx = this.state.transactions.findIndex(t => t.ticketId === ticketId);
+                if (idx === -1) return;
+                const tx = this.state.transactions[idx];
+                const tier = this.state.tiers.find(t => t.id === tx.tierId);
+                if (tier && tier.soldCount >= tx.quantity) {
+                    tier.soldCount -= tx.quantity;
+                }
+                this.state.transactions.splice(idx, 1);
+                this.renderAll();
+                this.showToast(`Removed transaction ${ticketId}`, "info");
+
+                // Direct database sync
+                if (this.db) {
+                    deleteDoc(doc(this.db, 'tickets', ticketId)).catch(() => {});
+                }
+                this.persistStateToCloud().catch(() => {});
+            },
+
+            // ==========================================
+            // ADMIN TAB 2: INVENTORY & PRICING CONTROLS
+            // ==========================================
+            renderAdminInventoryManager() {
+                const list = document.getElementById('admin-inventory-list');
+                if (!list) return;
+
+                list.innerHTML = this.state.tiers.map((tier, idx) => {
+                    const remaining = Math.max(0, tier.totalStock - tier.soldCount);
+                    return `
+                        <div class="p-5 rounded-2xl bg-neutral-900/95 border border-gold-400/25 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+                            <div class="lg:col-span-3">
+                                <label class="block text-[10px] uppercase tracking-wider text-gold-300 font-bold mb-1">Tier Name (Shown on Flyer)</label>
+                                <input type="text" value="${tier.name}" onchange="app.updateTierField(${idx}, 'name', this.value)" class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/15 text-cream-50 font-bold text-sm">
+                            </div>
+
+                            <div class="lg:col-span-2">
+                                <label class="block text-[10px] uppercase tracking-wider text-gold-300 font-bold mb-1">Price in Naira (₦)</label>
+                                <input type="number" value="${tier.price}" min="0" step="500" onchange="app.updateTierField(${idx}, 'price', Number(this.value))" class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/15 text-emerald-400 font-extrabold text-sm">
+                            </div>
+
+                            <div class="lg:col-span-1">
+                                <label class="block text-[10px] uppercase tracking-wider text-gold-300 font-bold mb-1">Guests</label>
+                                <input type="number" value="${tier.guestsPerTicket}" min="1" onchange="app.updateTierField(${idx}, 'guestsPerTicket', Number(this.value))" class="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/15 text-cream-50 text-sm">
+                            </div>
+
+                            <div class="lg:col-span-2">
+                                <label class="block text-[10px] uppercase tracking-wider text-gold-300 font-bold mb-1">Total Capacity</label>
+                                <input type="number" value="${tier.totalStock}" min="${tier.soldCount}" onchange="app.updateTierField(${idx}, 'totalStock', Number(this.value))" class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/15 text-cream-50 font-bold text-sm">
+                            </div>
+
+                            <div class="lg:col-span-2">
+                                <label class="block text-[10px] uppercase tracking-wider text-cream-200/60 font-bold mb-1">Sold / Remaining</label>
+                                <div class="px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 text-xs flex justify-between">
+                                    <span>Sold: <strong>${tier.soldCount}</strong></span>
+                                    <span class="text-gold-400 font-bold">${remaining} Left</span>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-2 flex items-center justify-end gap-2 pt-3 lg:pt-0">
+                                <button onclick="app.updateTierField(${idx}, 'soldOutOverride', !${tier.soldOutOverride})" class="px-3.5 py-2 rounded-xl text-xs font-bold border transition-all ${
+                                    tier.soldOutOverride 
+                                    ? 'bg-red-600/30 border-red-400 text-red-200' 
+                                    : 'bg-white/5 border-white/15 text-cream-200 hover:bg-white/10'
+                                }">
+                                    ${tier.soldOutOverride ? 'Forced Sold Out' : 'Mark Sold Out'}
+                                </button>
+                                ${this.state.tiers.length > 1 ? `
+                                    <button onclick="app.removeTicketTier(${idx})" class="p-2 rounded-xl bg-red-950/40 hover:bg-red-800 text-red-300 text-xs" title="Delete Tier">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+
+                            <div class="lg:col-span-12 pt-2 border-t border-white/10">
+                                <label class="block text-[10px] uppercase tracking-wider text-cream-200/60 mb-1">Perks & Package Description</label>
+                                <input type="text" value="${tier.perks}" onchange="app.updateTierField(${idx}, 'perks', this.value)" class="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 text-cream-100 text-xs">
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            updateTierField(tierIdx, field, value) {
+                if (!this.state.tiers[tierIdx]) return;
+                this.state.tiers[tierIdx][field] = value;
+                this.persistStateToCloud();
+                this.showToast(`Updated ${this.state.tiers[tierIdx].name} (${field})`, "success");
+            },
+
+            addNewTicketTier() {
+                this.state.tiers.push({
+                    id: 'tier-custom-' + Date.now(),
+                    name: 'ROYAL SPONSOR TABLE',
+                    price: 1000000,
+                    guestsPerTicket: 12,
+                    totalStock: 5,
+                    soldCount: 0,
+                    icon: 'fa-crown',
+                    theme: 'gold',
+                    perks: 'Bespoke Stage-Front Royal Enclosure for 12 Guests • Premium Champagne Parade & Executive Security',
+                    soldOutOverride: false
+                });
+                this.persistStateToCloud();
+                this.showToast("New ticket tier added!", "success");
+            },
+
+            removeTicketTier(idx) {
+                this.state.tiers.splice(idx, 1);
+                this.persistStateToCloud();
+                this.showToast("Ticket tier removed.", "info");
+            },
+
+            // ==========================================
+            // ADMIN TAB 3: FRONTEND CMS & PAYSTACK KEYS
+            // ==========================================
+            populateCMSForm() {
+                const c = this.state.cms;
+                const setVal = (id, v) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = v || '';
+                };
+                setVal('cms-title-main', c.titleMain);
+                setVal('cms-title-script', c.titleScript);
+                setVal('cms-organizers', c.organizers);
+                setVal('cms-tagline', c.tagline);
+                setVal('cms-description', c.description);
+                setVal('cms-date-text', c.dateText);
+                setVal('cms-time-text', c.timeText);
+                setVal('cms-location-text', c.locationText);
+                setVal('cms-venue-text', c.venueText);
+                setVal('cms-announcement', c.announcement);
+                setVal('cms-vibe-pill', c.vibePill);
+                setVal('cms-dresscode', c.dressCode);
+                setVal('cms-contact', c.contactInfo);
+                setVal('cms-paystack-key', c.paystackPublicKey);
+                setVal('cms-service-fee', c.serviceFee || 0);
+                setVal('cms-countdown-iso', c.countdownIso);
+                setVal('cms-admin-pin', c.adminPin);
+            },
+
+            saveCMSConfig(e) {
+                e.preventDefault();
+                const getVal = (id) => document.getElementById(id)?.value.trim() || '';
+                const updatedPin = getVal('cms-admin-pin') || '2026';
+                this.state.cms = {
+                    titleMain: getVal('cms-title-main'),
+                    titleScript: getVal('cms-title-script'),
+                    organizers: getVal('cms-organizers'),
+                    tagline: getVal('cms-tagline'),
+                    description: getVal('cms-description'),
+                    dateText: getVal('cms-date-text'),
+                    timeText: getVal('cms-time-text'),
+                    locationText: getVal('cms-location-text'),
+                    venueText: getVal('cms-venue-text'),
+                    announcement: getVal('cms-announcement'),
+                    vibePill: getVal('cms-vibe-pill'),
+                    dressCode: getVal('cms-dresscode'),
+                    contactInfo: getVal('cms-contact'),
+                    paystackPublicKey: getVal('cms-paystack-key'),
+                    serviceFee: Math.max(0, Number(getVal('cms-service-fee') || 0)),
+                    countdownIso: getVal('cms-countdown-iso') || '2026-12-28T17:00',
+                    adminPin: updatedPin
+                };
+                this.persistStateToCloud();
+                this.showToast("All CMS & Paystack settings published to Database!", "success");
+            },
+
+            resetToFactoryDefaults() {
+                this.state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                this.persistStateToCloud();
+                this.showToast("Restored original Flyer defaults.", "info");
+            },
+
+            // ==========================================
+            // MANUAL / OFFLINE SALE LOGGER & CSV EXPORT
+            // ==========================================
+            openManualSaleModal() {
+                const select = document.getElementById('ms-tier');
+                select.innerHTML = this.state.tiers.map(t => `<option value="${t.id}">${t.name} (${this.formatNaira(t.price)})</option>`).join('');
+                const modal = document.getElementById('manual-sale-modal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            },
+
+            handleManualSaleSubmit(e) {
+                e.preventDefault();
+                const buyerName = document.getElementById('ms-name').value.trim();
+                const buyerEmail = document.getElementById('ms-email').value.trim();
+                const buyerPhone = document.getElementById('ms-phone').value.trim();
+                const tierId = document.getElementById('ms-tier').value;
+                const quantity = Number(document.getElementById('ms-qty').value || 1);
+
+                const tier = this.state.tiers.find(t => t.id === tierId);
+                if (!tier) return;
+
+                document.getElementById('manual-sale-modal').classList.add('hidden');
+                document.getElementById('manual-sale-modal').classList.remove('flex');
+
+                this.finalizeTicketPurchase({
+                    buyerName,
+                    buyerEmail,
+                    buyerPhone,
+                    tier,
+                    quantity,
+                    reference: 'MANUAL-VIP-' + Math.floor(10000 + Math.random() * 90000),
+                    paymentMethod: 'Admin Direct'
+                });
+            },
+
+            exportTransactionsCSV() {
+                const headers = ['Ticket ID', 'Reference', 'Buyer Name', 'Email', 'Phone', 'Tier', 'Qty', 'Guests Admitted', 'Amount Paid (NGN)', 'Checked In', 'Timestamp'];
+                const rows = this.state.transactions.map(tx => [
+                    tx.ticketId,
+                    tx.reference,
+                    `"${tx.buyerName.replace(/"/g, '""')}"`,
+                    tx.buyerEmail,
+                    tx.buyerPhone,
+                    `"${tx.tierName}"`,
+                    tx.quantity,
+                    tx.guestsAdmitted,
+                    tx.amountPaid,
+                    tx.checkedIn ? 'YES' : 'NO',
+                    tx.timestamp
+                ]);
+
+                const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement('a');
+                link.setAttribute('href', encodedUri);
+                link.setAttribute('download', `Couture-Cocktails-Transactions-${new Date().toISOString().slice(0,10)}.csv`);
+                link.click();
+                this.showToast("Transaction CSV exported!", "success");
+            },
+
+            // ==========================================
+            // UTILITIES: COUNTDOWN, SCROLL, TOASTS
+            // ==========================================
+            startCountdownTimer() {
+                const updateTimer = () => {
+                    const targetDate = new Date(this.state.cms.countdownIso || '2026-12-28T17:00:00').getTime();
+                    const now = Date.now();
+                    const diff = Math.max(0, targetDate - now);
+
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    const mins = Math.floor((diff / 1000 / 60) % 60);
+                    const secs = Math.floor((diff / 1000) % 60);
+
+                    const pad = (n) => String(n).padStart(2, '0');
+                    const dEl = document.getElementById('cd-days');
+                    if (dEl) {
+                        dEl.textContent = pad(days);
+                        document.getElementById('cd-hours').textContent = pad(hours);
+                        document.getElementById('cd-mins').textContent = pad(mins);
+                        document.getElementById('cd-secs').textContent = pad(secs);
+                    }
+                };
+                updateTimer();
+                setInterval(updateTimer, 1000);
+            },
+
+            scrollToSection(sectionId) {
+                if (this.currentView !== 'public') {
+                    this.setView('public');
+                }
+                setTimeout(() => {
+                    const el = document.getElementById(sectionId);
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }, 50);
+            },
+
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+
+                const colors = {
+                    success: 'bg-emerald-950 border-emerald-400 text-emerald-200',
+                    error: 'bg-red-950 border-red-400 text-red-200',
+                    info: 'bg-crimson-950 border-gold-400 text-gold-200'
+                };
+                const icons = {
+                    success: 'fa-circle-check text-emerald-400',
+                    error: 'fa-triangle-exclamation text-red-400',
+                    info: 'fa-bell text-gold-400'
+                };
+
+                const toast = document.createElement('div');
+                toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl border shadow-2xl text-xs sm:text-sm font-semibold transition-all duration-300 ${colors[type] || colors.info}`;
+                toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-base"></i><span>${this.escapeHtml(message)}</span>`;
+
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3800);
+            }
+        };
+
+        // Expose `app` globally for inline event handlers and initialize on load
+        window.app = app;
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
